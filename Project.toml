@@ -1,0 +1,13 @@
+name = "ShockCooling"
+uuid = "b77c5ba5-d2b9-4bc6-ab29-7138d5bab3f2"
+authors = ["Patrick Armstrong <u6096820@anu.edu.au>"]
+version = "0.1.0"
+
+[deps]
+ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+Supernovae = "2f2b6c65-c816-4ba9-a39c-7324b2b860a4"
+TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+UnitfulAstro = "6112ee07-acf9-5e0f-b108-d242c714bf9f"
