@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#=
+JULIA="${JULIA:-julia}"
+JULIA_CMD="${JULIA_CMD:-$JULIA --color=yes --startup-file=no}"
+# below gets the directory name of the script, even if there is a symlink involved
+# from https://stackoverflow.com/questions/59895/get-the-source-directory-of-a-bash-script-from-within-the-script-itself
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+export JULIA_PROJECT=$DIR/..
+export JULIA_LOAD_PATH=@:@stdlib  # exclude default environment
+exec $JULIA_CMD -e 'include(popfirst!(ARGS))' "$SOURCE" "$@"
+=#
+
+# First get args so that we can crash ASAP
+using ArgParse
+
+function get_args()
+    s = ArgParseSettings()
+    @add_arg_table s begin
+        "--verbose", "-v"
+            help = "Increase level of logging verbosity"
+            action = :store_true
+        "toml"
+            help = "Path to toml input file"
+            required = true
+    end
+
+    return parse_args(s)
+end
+args = get_args()
+
+# Assuming args worked, do eveything else
+using TOML
+
+include("../src/ShockCooling.jl")
+using .ShockCooling
+
+# Run script
+verbose = args["verbose"]
+toml_path = args["toml"]
+run_shockcooling(toml_path, verbose)

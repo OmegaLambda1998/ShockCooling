@@ -1,0 +1,8 @@
+[ global ]
+base_path = "/path/to/base/path"
+output_path = "/path/to/output/path"
+filter_path = "/path/to/filter/path"
+data_path = "/path/to/data/path"
+logging = true
+log_file = "file.txt"
+
