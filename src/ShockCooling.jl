@@ -2,6 +2,7 @@ module ShockCooling
 
 # External packages
 using Supernovae
+using Unitful, UnitfulAstro
 using LoggingExtras
 using TOML
 
@@ -9,8 +10,21 @@ using TOML
 include("Models.jl")
 using .Models
 
+include("Fitting.jl")
+using .Fitting
+
+include("Plotting.jl")
+using .Plotting
+
 # Exports
 export run_shockcooling
+export plot_luminosity, plot_luminosity!
+export plot_radius, plot_radius!
+export plot_temperature, plot_temperature!
+export plot_prior, plot_prior!
+export plot_walkers, plot_walkers!
+export plot_contour, plot_contour!
+export plot_comparison, plot_comparison!
 
 function setup_global_config!(toml::Dict)
     config = get(toml, "global", Dict())
@@ -102,6 +116,54 @@ function setup_model(model_dict::Dict)
     return model(constraints)
 end
 
+function update_supernova!(supernova::Supernova, config::Dict)
+    @debug "Starting with $(length(supernova.lightcurve.observations)) observations"
+    # Unpack
+    min_time = get(config, "min_time", -Inf)
+    min_time_unit = uparse(get(config, "min_time_unit", "d"))
+    min_time_range = get(config, "min_time_range", [-Inf, Inf]) .* min_time_unit
+    max_time = get(config, "max_time", Inf)
+    max_time_unit = uparse(get(config, "max_time_unit", "d"))
+    max_time_range = get(config, "max_time_range", [-Inf, Inf]) .* max_time_unit
+
+    # Get min time
+    @debug "min_time option = $min_time"
+    if min_time in ["min", "max"]
+        observations = [obs for obs in supernova.lightcurve.observations if ((obs.time > min_time_range[1]) & (obs.time < min_time_range[2]))]
+        best_obs = observations[1]
+        for obs in observations
+            if ((min_time == "min") & (obs.flux < best_obs.flux)) | ((min_time == "max") & (obs.flux > best_obs.flux))
+                best_obs = obs
+            end
+        end
+        min_time = best_obs.time
+    else
+        min_time = min_time * min_time_unit
+    end
+    @debug "Min time set to $min_time"
+
+    # Get max time
+    @debug "max_time option = $max_time"
+    if max_time in ["min", "max"]
+        observations = [obs for obs in supernova.lightcurve.observations if ((obs.time > max_time_range[1]) & (obs.time < max_time_range[2]))]
+        best_obs = observations[1]
+        for obs in observations
+            if ((max_time == "min") & (obs.flux < best_obs.flux)) | ((max_time == "max") & (obs.flux > best_obs.flux))
+                best_obs = obs
+            end
+        end
+        max_time = best_obs.time
+    else
+        max_time = max_time * max_time_unit
+    end
+    @debug "Max time set to $max_time"
+
+    # Cut out observations
+    observations = [obs for obs in supernova.lightcurve.observations if ((obs.time > min_time) & (obs.time < max_time))]
+    supernova.lightcurve.observations = observations
+    @debug "Ending with $(length(supernova.lightcurve.observations)) observations"
+end
+
 function run_shockcooling(toml::Dict, verbose::Bool)
     setup_global_config!(toml)
     config = toml["global"]
@@ -134,11 +196,38 @@ function run_shockcooling(toml::Dict, verbose::Bool)
         @debug "Using data in $data_path"
         supernova = process_supernova(data_path, verbose)
     end
+    # Cut down data
+    update_supernova!(supernova, toml["data"])
     # Get model
     # You must specify the model name as it appears in src/models (i.e P15)
     @info "Loading in $(length(toml["model"])) models"
     models = [setup_model(model_dict) for model_dict in toml["model"]]
     @debug "Loaded in $(length(models)) models"
+    # Fit models to data
+    priors = []
+    burn_chains = []
+    chains = []
+    llhoodvals = []
+    for model in models
+        @info "Fitting $(model.name)"
+        prior, burn_chain, chain, llhoodval = run_mcmc(toml["fitting"], model, supernova)
+        push!(priors, prior)
+        push!(burn_chains, burn_chain)
+        push!(chains, chain)
+        push!(llhoodvals, llhoodval)
+    end
+    # Plotting
+    plot_config = get(toml, "plot", Dict())
+
+    prior_plot_config = get(plot_config, "prior", nothing)
+    if !isnothing(prior_plot_config)
+        @info "Plotting priors"
+        for (i, model) in enumerate(models)
+            #TODO fix me
+            prior_plot_config["path"] = "./prior_$(model.name)"
+            plot_prior(model, priors[i], prior_plot_config)
+        end
+    end
 end
 
 function run_shockcooling(toml_path::AbstractString, verbose::Bool)

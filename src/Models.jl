@@ -7,9 +7,11 @@ using Unitful, UnitfulAstro
 using Distributions
 
 # Exports
+export Model
 export get_model
 export run_model
 export get_constraints
+export bolometric_luminosity, radius, temperature
 
 abstract type Model end
 
@@ -48,5 +50,7 @@ function get_constraints(constraints_dict::Dict)
     end
     return constraints
 end
+
+
 
 end
