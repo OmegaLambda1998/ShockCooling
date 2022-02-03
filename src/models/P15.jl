@@ -1,8 +1,5 @@
 # Based of Piro 2015
 # DOI: 10.1088/2041-8205/808/2/L51 
-#
-# Using the form found in Arcavi Et. Al 2017
-# DOI: 10.3847/2041-8213/aa5be1
 
 export P15
 mutable struct P15 <: Model
@@ -24,7 +21,6 @@ function P15(constraints::Dict)
 end
 
 function bolometric_luminosity(model::P15, param::Dict, observation::Observation)
-    #TODO fix up the equation to not rely on weird numerical values
     # Load parameters
     r = param["R"] # Envelope radius
     m = param["M"] # Envelope mass
@@ -80,7 +76,6 @@ function run_model(model::P15, param::Dict, supernova::Supernova)
     m_flux = [model_flux(model, param, obs) for obs in supernova.lightcurve.observations] .|> u"erg / s / cm^2 / Hz"
     dist = 10u"pc"
     R = [radius(model, param, obs) for obs in supernova.lightcurve.observations]
-    abs_mag = @. -2.5 * log10((m_flux / 3631u"Jy") * R * R / (dist * dist))
     abs_mag = @. -48.6 - 2.5 * (log10(ustrip(m_flux)) + log10(uconvert(NoUnits, R / dist)^2))
     return abs_mag * u"AB_mag"
 end
