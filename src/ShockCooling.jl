@@ -5,6 +5,7 @@ using Supernovae
 using Unitful, UnitfulAstro
 using LoggingExtras
 using TOML
+using Statistics
 
 # Internal Packages
 include("Models.jl")
@@ -120,10 +121,10 @@ function update_supernova!(supernova::Supernova, config::Dict)
     @debug "Starting with $(length(supernova.lightcurve.observations)) observations"
     # Unpack
     min_time = get(config, "min_time", -Inf)
-    min_time_unit = uparse(get(config, "min_time_unit", "d"))
+    min_time_unit = uparse(get(config, "min_time_unit", "d"), unit_context = [Unitful, UnitfulAstro])
     min_time_range = get(config, "min_time_range", [-Inf, Inf]) .* min_time_unit
     max_time = get(config, "max_time", Inf)
-    max_time_unit = uparse(get(config, "max_time_unit", "d"))
+    max_time_unit = uparse(get(config, "max_time_unit", "d"), unit_context = [Unitful, UnitfulAstro])
     max_time_range = get(config, "max_time_range", [-Inf, Inf]) .* max_time_unit
 
     # Get min time
@@ -162,6 +163,15 @@ function update_supernova!(supernova::Supernova, config::Dict)
     observations = [obs for obs in supernova.lightcurve.observations if ((obs.time > min_time) & (obs.time < max_time))]
     supernova.lightcurve.observations = observations
     @debug "Ending with $(length(supernova.lightcurve.observations)) observations"
+end
+
+function get_bestfit(chain)
+    m, r, t, v = [quantile([c[i] for c in chain], [0.16, 0.5, 0.84]) for i in 1:4]
+    for val in [m, r, t, v]
+        val[1] = val[2] - val[1]
+        val[3] = val[3] - val[2]
+    end
+    return m, r, t, v
 end
 
 function run_shockcooling(toml::Dict, verbose::Bool)
@@ -205,27 +215,49 @@ function run_shockcooling(toml::Dict, verbose::Bool)
     @debug "Loaded in $(length(models)) models"
     # Fit models to data
     priors = []
-    burn_chains = []
     chains = []
-    llhoodvals = []
+    accept_ratios = []
+    logdensities = []
+    blobs = []
+    bestfits = []
+    params = []
     for model in models
         @info "Fitting $(model.name)"
-        prior, burn_chain, chain, llhoodval = run_mcmc(toml["fitting"], model, supernova)
+        prior, chain, accept_ratio, logdensity, blob = run_mcmc(toml["fitting"], model, supernova)
+        save_chain(joinpath(config["output_path"], "chain_P15"), chain)
         push!(priors, prior)
-        push!(burn_chains, burn_chain)
         push!(chains, chain)
-        push!(llhoodvals, llhoodval)
+        push!(accept_ratios, accept_ratio)
+        push!(logdensities, logdensity)
+        push!(blobs, blob)
+        bestfit = get_bestfit(chain)
+        push!(bestfits, bestfit)
+        param = Dict()
+        for (i, k) in enumerate(sort!(collect(keys(model.parameter_names))))
+            @info "Best fitting $(model.parameter_names[k]) = $(bestfit[i][2])+$(bestfit[i][3])/-$(bestfit[i][1]) $(model.constraints[k][2])"
+            param[k] = bestfit[i][2] * model.constraints[k][2]
+        end
+        push!(params, param)
     end
+
     # Plotting
     plot_config = get(toml, "plot", Dict())
 
-    prior_plot_config = get(plot_config, "prior", nothing)
-    if !isnothing(prior_plot_config)
-        @info "Plotting priors"
+    contour_plot_config = get(plot_config, "contour", nothing)
+    if !isnothing(contour_plot_config)
+        @info "Plotting contour"
         for (i, model) in enumerate(models)
-            #TODO fix me
-            prior_plot_config["path"] = "./prior_$(model.name)"
-            plot_prior(model, priors[i], prior_plot_config)
+            contour_plot_config["path"] = joinpath(config["output_path"], "contour_$(model.name).svg")
+            plot_contour(model, chains[i], contour_plot_config) 
+        end
+    end
+
+    comparison_plot_config = get(plot_config, "comparison", nothing)
+    if !isnothing(comparison_plot_config)
+        @info "Plotting comparison"
+        for (i, model) in enumerate(models)
+            comparison_plot_config["path"] = joinpath(config["output_path"], "comparison_$(model.name).svg")
+            plot_comparison(model, supernova, params[i], comparison_plot_config) 
         end
     end
 end

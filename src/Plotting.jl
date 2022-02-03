@@ -5,6 +5,10 @@ using CairoMakie
 CairoMakie.activate!(type = "svg")
 using Unitful, UnitfulAstro
 using Supernovae
+using Random
+Random.seed!(0)
+using KernelDensity
+using LaTeXStrings
 
 
 # Internal Packages
@@ -15,10 +19,33 @@ using ..Fitting
 export plot_luminosity, plot_luminosity!
 export plot_radius, plot_radius!
 export plot_temperature, plot_temperature!
-export plot_prior, plot_prior!
-export plot_walkers, plot_walkers!
 export plot_contour, plot_contour!
 export plot_comparison, plot_comparison!
+
+# Markers
+markers_labels = shuffle([
+    :rect,
+    :star5,
+    :diamond,
+    :hexagon,
+    :cross,
+    :xcross,
+    :utriangle,
+    :dtriangle,
+    :ltriangle,
+    :rtriangle,
+    :pentagon,
+    :star4,
+    :star8,
+    :vline,
+    :hline,
+    :x,
+    :+,
+    :circle
+   ])
+
+# Colours
+colour_labels = shuffle(["salmon", "coral", "tomato", "firebrick", "crimson", "red", "orange", "green", "forestgreen", "seagreen", "olive", "lime", "charteuse", "teal", "turquoise", "cyan", "navyblue", "midnightblue", "indigo", "royalblue", "slateblue", "steelblue", "blue", "purple", "orchid", "magenta", "maroon", "hotpink", "deeppink", "saddlebrown", "brown", "peru", "tan"])
 
 function plot_temperature(model::Model, param::Dict, supernova::Supernova, plot_config::Dict)
     fig = Figure()
@@ -27,9 +54,9 @@ function plot_temperature(model::Model, param::Dict, supernova::Supernova, plot_
     if isnothing(time_unit)
         time_unit = unit(get(supernova, "time")[1])
     else
-        time_unit = uparse(time_unit)
+        time_unit = uparse(time_unit, unit_context = [Unitful, UnitfulAstro])
     end
-    temp_unit = uparse(get(units, "temp", "K"))
+    temp_unit = uparse(get(units, "temp", "K"), unit_context = [Unitful, UnitfulAstro])
     path = get(plot_config, "path", nothing)
     ax = Axis(fig[1, 1], yscale = log10, xlabel = "Time [$time_unit]", ylabel = "Temperature [$temp_unit]", title = "Temperature plot") 
     plot_temperature!(fig, ax, model, param, supernova, plot_config)
@@ -45,9 +72,9 @@ function plot_temperature!(fig, ax, model::Model, param::Dict, supernova::Supern
     if isnothing(time_unit)
         time_unit = unit(get(supernova, "time")[1])
     else
-        time_unit = uparse(time_unit)
+        time_unit = uparse(time_unit, unit_context = [Unitful, UnitfulAstro])
     end
-    temp_unit = uparse(get(units, "temp", "K"))
+    temp_unit = uparse(get(units, "temp", "K"), unit_context = [Unitful, UnitfulAstro])
 
     T = [temperature(model, param, obs) for obs in supernova.lightcurve.observations]
     x = ustrip.((get(supernova, "time") .- param["t"]) .|> time_unit)
@@ -62,9 +89,9 @@ function plot_radius(model::Model, param::Dict, supernova::Supernova, plot_confi
     if isnothing(time_unit)
         time_unit = unit(get(supernova, "time")[1])
     else
-        time_unit = uparse(time_unit)
+        time_unit = uparse(time_unit, unit_context = [Unitful, UnitfulAstro])
     end
-    rad_unit= uparse(get(units, "radius", "Rsun"))
+    rad_unit= uparse(get(units, "radius", "Rsun"), unit_context = [Unitful, UnitfulAstro])
 
     path = get(plot_config, "path", nothing)
     ax = Axis(fig[1, 1], yscale = log10, xlabel = "Time [$time_unit]", ylabel = "Radius [$rad_unit]", title = "Radius") 
@@ -81,9 +108,9 @@ function plot_radius!(fig, ax, model::Model, param::Dict, supernova::Supernova, 
     if isnothing(time_unit)
         time_unit = unit(get(supernova, "time")[1])
     else
-        time_unit = uparse(time_unit)
+        time_unit = uparse(time_unit, unit_context = [Unitful, UnitfulAstro])
     end
-    rad_unit = uparse(get(units, "radius", "Rsun"))
+    rad_unit = uparse(get(units, "radius", "Rsun"), unit_context = [Unitful, UnitfulAstro])
 
     R = [radius(model, param, obs) for obs in supernova.lightcurve.observations]
     x = ustrip.((get(supernova, "time") .- param["t"]) .|> time_unit)
@@ -97,9 +124,9 @@ function plot_luminosity!(fig, ax, model::Model, param::Dict, supernova::Superno
     if isnothing(time_unit)
         time_unit = unit(get(supernova, "time")[1])
     else
-        time_unit = uparse(time_unit)
+        time_unit = uparse(time_unit, unit_context = [Unitful, UnitfulAstro])
     end
-    lum_unit = uparse(get(units, "luminosity", "erg / s"))
+    lum_unit = uparse(get(units, "luminosity", "erg / s"), unit_context = [Unitful, UnitfulAstro])
 
     L = [bolometric_luminosity(model, param, obs) for obs in supernova.lightcurve.observations]
     x = ustrip.((get(supernova, "time") .- param["t"]) .|> time_unit)
@@ -114,9 +141,9 @@ function plot_luminosity(model::Model, param::Dict, supernova::Supernova, plot_c
     if isnothing(time_unit)
         time_unit = unit(get(supernova, "time")[1])
     else
-        time_unit = uparse(time_unit)
+        time_unit = uparse(time_unit, unit_context = [Unitful, UnitfulAstro])
     end
-    lum_unit = uparse(get(units, "luminosity", "erg / s"))
+    lum_unit = uparse(get(units, "luminosity", "erg / s"), unit_context = [Unitful, UnitfulAstro])
 
     path = get(plot_config, "path", nothing)
     ax = Axis(fig[1, 1], xlabel = "Time [$time_unit]", ylabel = "Luminosity [$lum_unit]", title = "Bolometric Luminosity") 
@@ -127,81 +154,44 @@ function plot_luminosity(model::Model, param::Dict, supernova::Supernova, plot_c
     return fig, ax
 end
 
-function plot_prior!(fig, gax, model::Model, priors, plot_config::Dict)
+function plot_contour!(fig, gax, model::Model, chain, plot_config::Dict)
     ks = sort!(collect(keys(model.constraints)))
-    for (i, k) in enumerate(ks)
-        ax = Axis(gax[i, 1], xlabel = "$(model.parameter_names[k])")
-        hist!(ax, priors[i, :])
-    end
-end
-
-function plot_prior(model::Model, priors, plot_config::Dict)
-    fig = Figure()
-    path = get(plot_config, "path", nothing)
-    gax = fig[1, 1] = GridLayout()
-    plot_prior!(fig, gax, model, priors, plot_config)
-    if !isnothing(path)
-        save(path, fig)
-    end
-    return fig, gax
-end
-
-function plot_walkers!(fig, gax, model::Model, walkers, plot_config::Dict)
-    ks = sort!(collect(keys(model.constraints)))
-    dim, nwalker, steps = size(walkers)
-    for (i, k) in enumerate(ks)
-        ax = Axis(gax[i, 1], ylabel = model.parameter_names[k], xlabel="Steps")
-        for j in 1:nwalker
-            chain = walkers[i, j, :]
-            lines!(ax, 1:steps, chain, color=:grey)
-        end
-    end
-end
-
-function plot_walkers(model::Model, walkers, plot_config::Dict)
-    fig = Figure()
-    path = get(plot_config, "path", nothing)
-    gax = fig[1, 1] = GridLayout()
-    plot_walkers!(fig, gax, model, walkers, plot_config)
-    if !isnothing(path)
-        save(path, fig)
-    end
-    return fig, gax
-end
-
-function plot_contour!(fig, gax, model::Model, chain, llhood, plot_config::Dict)
-    ks = sort!(collect(keys(model.constraints)))
-    dim, nwalker, steps = size(chain)
-    llhood = vec(reshape(llhood, (1, nwalker * steps)))
-    zs = zs * zs'
-    for (i, ki) in enumerate(ks)
-        for (j, kj) in enumerate(ks)
-            if j > i
-                continue
-            end
-            ax = Axis(fig[i, j])
-            if i == 1
-                ax.ylabel = model.parameter_names[ki]
-            end
-            if j == dim
-                ax.xlabel = model.parameter_names[kj]
-            end
-            xs = vec(reshape(chain[i, :, :], (1, nwalker * steps)))
+    # Tranpose chain so each element is a parameter rather than a walker
+    chain = collect(eachrow(reduce(hcat, chain)))
+    n = length(ks)
+    for i in 1:n
+        for j in 1:i
+            ax = Axis(gax[i, j], xlabel = model.parameter_names[ks[j]], ylabel = model.parameter_names[ks[i]])
             if i == j
-                density!(ax, xs)
+                density!(ax, chain[i], color = "darkblue")
+                hist!(ax, chain[i], color = :transparent, normalization = :pdf, strokewidth = 1, strokecolor = "black")
+                ylims!(ax, low = 0)
+                xlims!(ax, minimum(chain[i]), maximum(chain[i]))
+                hideydecorations!(ax)
+                if i != n
+                    hidexdecorations!(ax)
+                end
             else
-                ys = vec(reshape(chain[j, :, :], (1, nwalker * steps)))
-                contour!(ax, xs, ys, zs)
+                k = kde(hcat(chain[j], chain[i]))
+                contour!(ax, k.x, k.y, k.density)
+                if j != 1
+                    hideydecorations!(ax, grid=false)
+                end
+                if i != n
+                    hidexdecorations!(ax, grid=false)
+                end
+                xlims!(ax, minimum(chain[j]), maximum(chain[j]))
+                ylims!(ax, minimum(chain[i]), maximum(chain[i]))
             end
         end
     end
 end
 
-function plot_contour(model::Model, chain, llhood, plot_config::Dict)
-    fig = Figure()
+function plot_contour(model::Model, chain, plot_config::Dict)
+    fig = Figure(resolution=(1600, 1200))
     path = get(plot_config, "path", nothing)
     gax = fig[1, 1] = GridLayout()
-    plot_contour!(fig, gax, model, chain, llhood, plot_config)
+    plot_contour!(fig, gax, model, chain, plot_config)
     if !isnothing(path)
         save(path, fig)
     end
@@ -209,40 +199,49 @@ function plot_contour(model::Model, chain, llhood, plot_config::Dict)
 end
 
 function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::Dict, plot_config::Dict)
-    time = get(supernova, "time")
     data_type = get(plot_config, "data_type", "flux")
-    if data_type == "flux"
-        data = get(supernova, "flux")
-    elseif data_type == "magnitude"
-        data = get(supernova, "magnitude")
-    elseif data_type == "abs_magnitude"
-        data = get(supernova, "abs_magnitude")
-    else
-        error("Unknown data type: $data_type. Possible data types are [flux, magnitude, abs_magnitude]")
-    end
-    m_absmag = run_model(model, param, supernova)
-    m_mag = absmag_to_mag.(m_absmag, supernova.redshift)
-    m_flux = mag_to_flux.(m_mag, supernova.zeropoint)
-    lc_ax = Axis(gax[1, 1])
-    res_ax = Axis(gax[2, 1])
-    if data_type == "flux"
-        @info unit(data[1])
-        m_data = m_flux .|> u"µJy" 
-    elseif data_type == "magnitude"
-        m_data = m_mag .|> u"AB_mag" 
+    @debug "Plotting data type set to $data_type"
+    units = get(plot_config, "unit", Dict())
+    time_unit = uparse(get(units, "time", "d"), unit_context = [Unitful, UnitfulAstro])
+    names = get(plot_config, "names", nothing)
+    @debug "Generating all plot vectors"
+    filters = Set([obs.filter.name for obs in supernova.lightcurve.observations])
+    lc_ax = Axis(gax[1, 1], xlabel = "Time [$time_unit]")
+    res_ax = Axis(gax[2, 1], xlabel = "Time [$time_unit]")
+    if data_type in ["magnitude", "abs_magnitude"]
         lc_ax.yreversed = true
         res_ax.yreversed = true
-    elseif data_type == "abs_magnitude"
-        m_data = m_absmag .|> u"AB_mag" 
-        lc_ax.yreversed = true
-        res_ax.yreversed = true
-    else
-        error("Unknown data type: $data_type. Possible data types are [flux, magnitude, abs_magnitude]")
     end
-    plot_lightcurve!(fig, lc_ax, supernova, plot_config)
-    scatter!(lc_ax, ustrip(time), ustrip(m_data))
-    lines!(res_ax, ustrip(time), [0 for t in time])
-    scatter!(res_ax, ustrip(time), ustrip(m_data) .- ustrip(data))
+    colours, markers = plot_lightcurve!(fig, lc_ax, supernova, plot_config)
+    for filt in filters
+        sn = filter(obs -> obs.filter.name == filt, supernova)
+        time = get(sn, "time")
+        m_absmag = run_model(model, param, sn)
+        m_mag = absmag_to_mag.(m_absmag, sn.redshift)
+        m_flux = mag_to_flux.(m_mag, sn.zeropoint)
+        if data_type == "flux"
+            data_unit = uparse(get(units, "data", "µJy"), unit_context = [Unitful, UnitfulAstro])
+            m_data = m_flux
+        elseif data_type == "magnitude"
+            data_unit = uparse(get(units, "data", "AB_mag"), unit_context = [Unitful, UnitfulAstro])
+            m_data = m_mag
+        elseif data_type == "abs_magnitude"
+            data_unit = uparse(get(units, "data", "AB_mag"), unit_context = [Unitful, UnitfulAstro])
+            m_data = m_absmag
+            lc_ax.yreversed = true
+            res_ax.yreversed = true
+        else
+            error("Unknown data type: $data_type. Possible data types are [flux, magnitude, abs_magnitude]")
+        end
+        lc_ax.ylabel = "$data_type [$data_unit]"
+        res_ax.ylabel = "model - data [$data_unit]"
+        data = get(sn, data_type)
+        data_err = get(sn, "$(data_type)_err")
+        lines!(lc_ax, ustrip(time), ustrip(m_data .|> data_unit), color = colours[filt])
+        lines!(res_ax, ustrip(time), [0 for t in time], color = "black")
+        scatter!(res_ax, ustrip(time), ustrip((m_data .|> data_unit)) .- ustrip((data .|> data_unit)), color = colours[filt])
+        errorbars!(res_ax, ustrip(time), ustrip((m_data .|> data_unit)) .- ustrip((data .|> data_unit)), ustrip(data_err .|> data_unit), color = colours[filt])
+    end
 end
 
 function plot_comparison(model::Model, supernova::Supernova, param::Dict, plot_config::Dict)

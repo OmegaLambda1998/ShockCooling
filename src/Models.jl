@@ -36,7 +36,7 @@ function get_constraints(constraints_dict::Dict)
     constraints = Dict()
     for param in keys(constraints_dict)
         param_dict = constraints_dict[param]
-        param_unit = uparse(param_dict["unit"])
+        param_unit = uparse(param_dict["unit"], unit_context = [Unitful, UnitfulAstro])
         param_prior = getfield(Distributions, Symbol(param_dict["prior"]))
         param_values = param_dict["values"]
         param_min = get(param_dict, "min", -Inf)
