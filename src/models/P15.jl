@@ -77,5 +77,6 @@ function run_model(model::P15, param::Dict, supernova::Supernova)
     dist = 10u"pc"
     R = [radius(model, param, obs) for obs in supernova.lightcurve.observations]
     abs_mag = @. -48.6 - 2.5 * (log10(ustrip(m_flux)) + log10(uconvert(NoUnits, R / dist)^2))
+    replace!(abs_mag, NaN => -10)
     return abs_mag * u"AB_mag"
 end

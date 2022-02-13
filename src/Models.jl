@@ -44,7 +44,7 @@ function get_constraints(constraints_dict::Dict)
         if param_prior == Normal
             prior = TruncatedNormal(param_values..., param_min, param_max)
         else
-            prior = TruncatedNormal(param_prior(param_values...), param_min, param_max)
+            prior = Truncated(param_prior(param_values...), param_min, param_max)
         end
         constraints[param] = (prior, param_unit)
     end

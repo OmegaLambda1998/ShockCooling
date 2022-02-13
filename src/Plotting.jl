@@ -78,8 +78,8 @@ function plot_temperature!(fig, ax, model::Model, param::Dict, supernova::Supern
 
     T = [temperature(model, param, obs) for obs in supernova.lightcurve.observations]
     x = ustrip.((get(supernova, "time") .- param["t"]) .|> time_unit)
-    y = ustrip.(T .|> temp_unit)
-    lines!(ax, x, y, label=model.name)
+    y = ustrip.(T .|> temp_unit) .+ 1e-10
+    scatter!(ax, x, y, label=model.name)
 end
 
 function plot_radius(model::Model, param::Dict, supernova::Supernova, plot_config::Dict)
@@ -115,7 +115,7 @@ function plot_radius!(fig, ax, model::Model, param::Dict, supernova::Supernova, 
     R = [radius(model, param, obs) for obs in supernova.lightcurve.observations]
     x = ustrip.((get(supernova, "time") .- param["t"]) .|> time_unit)
     y = ustrip.(R .|> rad_unit)
-    lines!(ax, x, y, label=model.name)
+    scatter!(ax, x, y, label=model.name)
 end
 
 function plot_luminosity!(fig, ax, model::Model, param::Dict, supernova::Supernova, plot_config::Dict)
@@ -131,7 +131,7 @@ function plot_luminosity!(fig, ax, model::Model, param::Dict, supernova::Superno
     L = [bolometric_luminosity(model, param, obs) for obs in supernova.lightcurve.observations]
     x = ustrip.((get(supernova, "time") .- param["t"]) .|> time_unit)
     y = log10.(ustrip.(L .|> lum_unit))
-    lines!(ax, x, y, label=model.name)
+    scatter!(ax, x, y, label=model.name)
 end
 
 function plot_luminosity(model::Model, param::Dict, supernova::Supernova, plot_config::Dict)

@@ -10,7 +10,7 @@ end
 
 # Default parameter names
 function P20(name::AbstractString, constraints::Dict)
-    parameter_names = Dict("R" => L"R_{e}~[R_{\odot}]", "M" => L"M_{e}~[M_{\odot}]", "v" => L"v_{e}~[\frac{km}{s}]", "t" => L"t_{off}~[Days]")
+    parameter_names = Dict("R" => L"R_{e}~[R_{\odot}]", "M" => L"M_{e}~[M_{\odot}]", "v" => L"v_{t}~[\frac{km}{s}]", "t" => L"t_{off}~[Days]")
     return P20(name, parameter_names, constraints)
 end
 
@@ -92,5 +92,6 @@ function run_model(model::P20, param::Dict, supernova::Supernova)
     dist = 10u"pc"
     R = [radius(model, param, obs) for obs in supernova.lightcurve.observations]
     abs_mag = @. -48.6 - 2.5 * (log10(ustrip(m_flux)) + log10(uconvert(NoUnits, R / dist)^2))
+    replace!(abs_mag, NaN => -10)
     return abs_mag * u"AB_mag"
 end
