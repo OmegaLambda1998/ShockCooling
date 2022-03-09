@@ -1,0 +1,36 @@
+Main.ShockCooling | [Info] Logging to /home/patricka/.julia/dev/ShockCooling/Examples/Outputs/2021zby/log.txt
+Main.ShockCooling | [Info] Loading in data
+Main.ShockCooling | [Debug] Using data in /home/patricka/.julia/dev/ShockCooling/Examples/Inputs/2021zby/2021zby_data.toml
+Supernovae.Data | [Info] Loading in Supernova 2021zby
+Supernovae.Data | [Debug] Max flux error set to 250.0 μJy
+Supernovae.Data | [Info] Found 2 photometry sources
+Supernovae.Data | [Info] Loading in lightcurves
+Supernovae.Data | [Debug] Loading lightcurve with peak_time = true
+Supernovae.Photometrics | [Info] Loading observations for atlas
+Supernovae.Photometrics | [Debug] Reading in string based header
+Supernovae.Photometrics | [Debug] Processing file
+Supernovae.Filters | [Debug] Could not find Misc__Atlas__orange in local files, attempting to find it on SVO FPS
+Supernovae.Filters | [Debug] Saving filter to /home/patricka/.julia/dev/ShockCooling/Examples/Inputs/Filters/Misc__Atlas__orange
+Supernovae.Filters | [Debug] Could not find Misc__Atlas__cyan in local files, attempting to find it on SVO FPS
+Supernovae.Filters | [Debug] Saving filter to /home/patricka/.julia/dev/ShockCooling/Examples/Inputs/Filters/Misc__Atlas__cyan
+Supernovae.Photometrics | [Info] Loading observations for tess 6hr
+Supernovae.Photometrics | [Debug] Reading in default header
+Supernovae.Photometrics | [Debug] Processing file
+Supernovae.Filters | [Debug] Could not find tess__tess__Red in local files, attempting to find it on SVO FPS
+Supernovae.Filters | [Debug] Saving filter to /home/patricka/.julia/dev/ShockCooling/Examples/Inputs/Filters/tess__tess__Red
+Supernovae.Photometrics | [Debug] Offsetting peak time
+Supernovae.Photometrics | [Debug] Peak time set to 59497.79872671324 d
+Supernovae.Data | [Info] Loading supernova
+Supernovae.Data | [Info] All done
+Main.ShockCooling | [Debug] Starting with 142 observations
+Main.ShockCooling | [Debug] min_time option = -Inf
+Main.ShockCooling | [Debug] Min time set to -Inf d
+Main.ShockCooling | [Debug] max_time option = -17
+Main.ShockCooling | [Debug] Max time set to -17 d
+Main.ShockCooling | [Debug] Ending with 43 observations
+Main.ShockCooling | [Info] Loading in 4 models
+Main.ShockCooling | [Debug] Loaded in 4 models
+Main.ShockCooling | [Info] Fitting Sapir & Waxman (2017) BSG
+Main.ShockCooling.Fitting | [Debug] Running with 8 threads
+Main.ShockCooling.Fitting | [Info] Generating priors
+Main.ShockCooling.Fitting | [Info] Running MCMC

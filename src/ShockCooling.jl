@@ -247,7 +247,7 @@ function run_shockcooling(toml::Dict, verbose::Bool)
     if !isnothing(contour_plot_config)
         @info "Plotting contour"
         for (i, model) in enumerate(models)
-            contour_plot_config["path"] = joinpath(config["output_path"], "contour_$(model.name).svg")
+            contour_plot_config["path"] = joinpath(config["output_path"], "Contour $(model.name).svg")
             plot_contour(model, chains[i], contour_plot_config) 
         end
     end
@@ -256,7 +256,7 @@ function run_shockcooling(toml::Dict, verbose::Bool)
     if !isnothing(comparison_plot_config)
         @info "Plotting comparison"
         for (i, model) in enumerate(models)
-            comparison_plot_config["path"] = joinpath(config["output_path"], "comparison_$(model.name).svg")
+            comparison_plot_config["path"] = joinpath(config["output_path"], "Comparison $(model.name).svg")
             plot_comparison(model, supernova, params[i], comparison_plot_config) 
         end
     end
