@@ -54,9 +54,12 @@ function run_mcmc(config::Dict, model::Model, supernova::Supernova)
     @debug "Running with $(Threads.nthreads()) threads"
     # Important config
     numwalkers = config["numwalkers"] 
+    @debug "Numwalkers: $numwalkers"
     thinning = get(config, "thinning", 1)
     burnin = config["burnin"]
+    @debug "Burnin: $burnin"
     iterations = config["iterations"]
+    @debug "Iterations: $iterations"
     llhood = likelihood_function(model, supernova)
 
     # Unimportant config

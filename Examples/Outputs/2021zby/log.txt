@@ -1,6 +1,6 @@
-Main.ShockCooling | [Info] Logging to /home/patricka/.julia/dev/ShockCooling/Examples/Outputs/2021zby/log.txt
+Main.ShockCooling | [Info] Logging to /home/patricka/dev/ShockCooling/Examples/Outputs/2021zby/log.txt
 Main.ShockCooling | [Info] Loading in data
-Main.ShockCooling | [Debug] Using data in /home/patricka/.julia/dev/ShockCooling/Examples/Inputs/2021zby/2021zby_data.toml
+Main.ShockCooling | [Debug] Using data in /home/patricka/dev/ShockCooling/Examples/Inputs/2021zby/2021zby_data.toml
 Supernovae.Data | [Info] Loading in Supernova 2021zby
 Supernovae.Data | [Debug] Max flux error set to 250.0 μJy
 Supernovae.Data | [Info] Found 2 photometry sources
@@ -25,45 +25,57 @@ Main.ShockCooling | [Debug] Ending with 43 observations
 Main.ShockCooling | [Info] Loading in 4 models
 Main.ShockCooling | [Debug] Loaded in 4 models
 Main.ShockCooling | [Info] Fitting Sapir & Waxman (2017) BSG
-Main.ShockCooling.Fitting | [Debug] Running with 8 threads
+Main.ShockCooling.Fitting | [Debug] Running with 56 threads
+Main.ShockCooling.Fitting | [Debug] Numwalkers: 10000
+Main.ShockCooling.Fitting | [Debug] Burnin: 500000
+Main.ShockCooling.Fitting | [Debug] Iterations: 1000000
 Main.ShockCooling.Fitting | [Info] Generating priors
 Main.ShockCooling.Fitting | [Info] Running MCMC
 Main.ShockCooling.Fitting | [Info] MCMC Finished
-Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.512
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 20.151728735277644+12.250019804949758/-6.442998282825016 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 52.6658759512157+9.081154332030117/-10.184560837025884 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.005483635680797+0.09690642558589602/-0.08532150052152332 d
-Main.ShockCooling | [Info] Best fitting $v_{s}~[\frac{km}{s}]$ = 11567.007226016216+2708.4241896056465/-1690.5537137991523 km s^-1
+Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.49643200000000004
+Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 20.44752109524117+9.168119894433882/-8.130649847032302 M⊙
+Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 50.35856030912424+9.356285109176781/-9.283995267041114 R⊙
+Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -23.97199049456485+0.09219190819045764/-0.09202184702321148 d
+Main.ShockCooling | [Info] Best fitting $v_{s}~[\frac{km}{s}]$ = 11850.488279792131+2458.255913080291/-1639.9270935973564 km s^-1
 Main.ShockCooling | [Info] Fitting Sapir & Waxman (2017) RSG
-Main.ShockCooling.Fitting | [Debug] Running with 8 threads
+Main.ShockCooling.Fitting | [Debug] Running with 56 threads
+Main.ShockCooling.Fitting | [Debug] Numwalkers: 10000
+Main.ShockCooling.Fitting | [Debug] Burnin: 500000
+Main.ShockCooling.Fitting | [Debug] Iterations: 1000000
 Main.ShockCooling.Fitting | [Info] Generating priors
 Main.ShockCooling.Fitting | [Info] Running MCMC
 Main.ShockCooling.Fitting | [Info] MCMC Finished
-Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.33599999999999997
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 20.211112084059227+11.038757869195571/-2.0004934508692642 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 18.297494593821117+6.225228722761255/-12.976097356891616 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -23.964747292076297+0.08731837460680225/-0.07100413746844936 d
-Main.ShockCooling | [Info] Best fitting $v_{s}~[\frac{km}{s}]$ = 13219.065962577384+10933.589809297406/-1895.277060741364 km s^-1
+Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.44110199999999994
+Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 19.697188109292192+10.035405599120903/-9.814207718135101 M⊙
+Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 17.260162568007278+7.883846709208175/-5.885473542411928 R⊙
+Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.00389747984657+0.09281745111039186/-0.09371557925588903 d
+Main.ShockCooling | [Info] Best fitting $v_{s}~[\frac{km}{s}]$ = 14188.387471697337+3225.428206021592/-2275.858223526204 km s^-1
 Main.ShockCooling | [Info] Fitting Piro (2015)
-Main.ShockCooling.Fitting | [Debug] Running with 8 threads
+Main.ShockCooling.Fitting | [Debug] Running with 56 threads
+Main.ShockCooling.Fitting | [Debug] Numwalkers: 10000
+Main.ShockCooling.Fitting | [Debug] Burnin: 500000
+Main.ShockCooling.Fitting | [Debug] Iterations: 1000000
 Main.ShockCooling.Fitting | [Info] Generating priors
 Main.ShockCooling.Fitting | [Info] Running MCMC
 Main.ShockCooling.Fitting | [Info] MCMC Finished
-Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.4640000000000001
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 0.7987229680989534+0.7715633151171248/-0.4048012237583416 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 15.342252221914237+3.970875927370823/-7.120874336093287 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.01866169521779+0.08680717612277533/-0.12612752199099475 d
-Main.ShockCooling | [Info] Best fitting $v_{e}~[\frac{km}{s}]$ = 28598.026092854307+4028.619300639013/-2556.085432646556 km s^-1
+Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.42535600000000007
+Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 0.40064997872455876+0.5254735687426568/-0.14795609007457022 M⊙
+Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 17.077632067305437+8.939564468901771/-7.290973585373125 R⊙
+Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.104355342883757+0.09253276697809909/-0.09557487042048862 d
+Main.ShockCooling | [Info] Best fitting $v_{e}~[\frac{km}{s}]$ = 30259.353810394066+4378.617790223747/-3624.9420701377094 km s^-1
 Main.ShockCooling | [Info] Fitting Piro (2020)
-Main.ShockCooling.Fitting | [Debug] Running with 8 threads
+Main.ShockCooling.Fitting | [Debug] Running with 56 threads
+Main.ShockCooling.Fitting | [Debug] Numwalkers: 10000
+Main.ShockCooling.Fitting | [Debug] Burnin: 500000
+Main.ShockCooling.Fitting | [Debug] Iterations: 1000000
 Main.ShockCooling.Fitting | [Info] Generating priors
 Main.ShockCooling.Fitting | [Info] Running MCMC
 Main.ShockCooling.Fitting | [Info] MCMC Finished
-Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.484
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 125.1034853528239+54.30136274827484/-37.47785387335314 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 18.42625707249661+13.057699047014559/-4.276846099344009 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.024271507062014+0.10657638013480053/-0.08161796343150485 d
-Main.ShockCooling | [Info] Best fitting $v_{t}~[\frac{km}{s}]$ = 19120.686157700293+2276.7255176193576/-4373.911737797956 km s^-1
+Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.521908
+Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 106.81767804111296+46.728932715583525/-43.979778979835345 M⊙
+Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 20.085753429150536+7.166865107403389/-5.716761257082155 R⊙
+Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.000655172855147+0.09127306851774364/-0.09286847244175078 d
+Main.ShockCooling | [Info] Best fitting $v_{t}~[\frac{km}{s}]$ = 18891.33144819827+3300.508884309249/-2571.872764841288 km s^-1
 Main.ShockCooling | [Info] Plotting contour
 Main.ShockCooling.Plotting | [Debug] Creating a 4x4 sized contour plot
 Main.ShockCooling.Plotting | [Debug] Creating a 4x4 sized contour plot
