@@ -9,15 +9,9 @@ Supernovae.Data | [Debug] Loading lightcurve with peak_time = true
 Supernovae.Photometrics | [Info] Loading observations for atlas
 Supernovae.Photometrics | [Debug] Reading in string based header
 Supernovae.Photometrics | [Debug] Processing file
-Supernovae.Filters | [Debug] Could not find Misc__Atlas__orange in local files, attempting to find it on SVO FPS
-Supernovae.Filters | [Debug] Saving filter to /home/patricka/.julia/dev/ShockCooling/Examples/Inputs/Filters/Misc__Atlas__orange
-Supernovae.Filters | [Debug] Could not find Misc__Atlas__cyan in local files, attempting to find it on SVO FPS
-Supernovae.Filters | [Debug] Saving filter to /home/patricka/.julia/dev/ShockCooling/Examples/Inputs/Filters/Misc__Atlas__cyan
 Supernovae.Photometrics | [Info] Loading observations for tess 6hr
 Supernovae.Photometrics | [Debug] Reading in default header
 Supernovae.Photometrics | [Debug] Processing file
-Supernovae.Filters | [Debug] Could not find tess__tess__Red in local files, attempting to find it on SVO FPS
-Supernovae.Filters | [Debug] Saving filter to /home/patricka/.julia/dev/ShockCooling/Examples/Inputs/Filters/tess__tess__Red
 Supernovae.Photometrics | [Debug] Offsetting peak time
 Supernovae.Photometrics | [Debug] Peak time set to 59497.79872671324 d
 Supernovae.Data | [Info] Loading supernova
@@ -34,3 +28,69 @@ Main.ShockCooling | [Info] Fitting Sapir & Waxman (2017) BSG
 Main.ShockCooling.Fitting | [Debug] Running with 8 threads
 Main.ShockCooling.Fitting | [Info] Generating priors
 Main.ShockCooling.Fitting | [Info] Running MCMC
+Main.ShockCooling.Fitting | [Info] MCMC Finished
+Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.512
+Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 20.151728735277644+12.250019804949758/-6.442998282825016 M⊙
+Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 52.6658759512157+9.081154332030117/-10.184560837025884 R⊙
+Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.005483635680797+0.09690642558589602/-0.08532150052152332 d
+Main.ShockCooling | [Info] Best fitting $v_{s}~[\frac{km}{s}]$ = 11567.007226016216+2708.4241896056465/-1690.5537137991523 km s^-1
+Main.ShockCooling | [Info] Fitting Sapir & Waxman (2017) RSG
+Main.ShockCooling.Fitting | [Debug] Running with 8 threads
+Main.ShockCooling.Fitting | [Info] Generating priors
+Main.ShockCooling.Fitting | [Info] Running MCMC
+Main.ShockCooling.Fitting | [Info] MCMC Finished
+Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.33599999999999997
+Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 20.211112084059227+11.038757869195571/-2.0004934508692642 M⊙
+Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 18.297494593821117+6.225228722761255/-12.976097356891616 R⊙
+Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -23.964747292076297+0.08731837460680225/-0.07100413746844936 d
+Main.ShockCooling | [Info] Best fitting $v_{s}~[\frac{km}{s}]$ = 13219.065962577384+10933.589809297406/-1895.277060741364 km s^-1
+Main.ShockCooling | [Info] Fitting Piro (2015)
+Main.ShockCooling.Fitting | [Debug] Running with 8 threads
+Main.ShockCooling.Fitting | [Info] Generating priors
+Main.ShockCooling.Fitting | [Info] Running MCMC
+Main.ShockCooling.Fitting | [Info] MCMC Finished
+Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.4640000000000001
+Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 0.7987229680989534+0.7715633151171248/-0.4048012237583416 M⊙
+Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 15.342252221914237+3.970875927370823/-7.120874336093287 R⊙
+Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.01866169521779+0.08680717612277533/-0.12612752199099475 d
+Main.ShockCooling | [Info] Best fitting $v_{e}~[\frac{km}{s}]$ = 28598.026092854307+4028.619300639013/-2556.085432646556 km s^-1
+Main.ShockCooling | [Info] Fitting Piro (2020)
+Main.ShockCooling.Fitting | [Debug] Running with 8 threads
+Main.ShockCooling.Fitting | [Info] Generating priors
+Main.ShockCooling.Fitting | [Info] Running MCMC
+Main.ShockCooling.Fitting | [Info] MCMC Finished
+Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.484
+Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 125.1034853528239+54.30136274827484/-37.47785387335314 M⊙
+Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 18.42625707249661+13.057699047014559/-4.276846099344009 R⊙
+Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.024271507062014+0.10657638013480053/-0.08161796343150485 d
+Main.ShockCooling | [Info] Best fitting $v_{t}~[\frac{km}{s}]$ = 19120.686157700293+2276.7255176193576/-4373.911737797956 km s^-1
+Main.ShockCooling | [Info] Plotting contour
+Main.ShockCooling.Plotting | [Debug] Creating a 4x4 sized contour plot
+Main.ShockCooling.Plotting | [Debug] Creating a 4x4 sized contour plot
+Main.ShockCooling.Plotting | [Debug] Creating a 4x4 sized contour plot
+Main.ShockCooling.Plotting | [Debug] Creating a 4x4 sized contour plot
+Main.ShockCooling | [Info] Plotting comparison
+Main.ShockCooling.Plotting | [Debug] Plotting data type set to flux
+Main.ShockCooling.Plotting | [Debug] Generating all plot vectors
+Supernovae.Plotting | [Debug] Plotting data type set to flux
+Supernovae.Plotting | [Debug] Plotting data unit set to μJy
+Supernovae.Plotting | [Debug] Generating all plot vectors
+Supernovae.Plotting | [Debug] Plotting
+Main.ShockCooling.Plotting | [Debug] Plotting data type set to flux
+Main.ShockCooling.Plotting | [Debug] Generating all plot vectors
+Supernovae.Plotting | [Debug] Plotting data type set to flux
+Supernovae.Plotting | [Debug] Plotting data unit set to μJy
+Supernovae.Plotting | [Debug] Generating all plot vectors
+Supernovae.Plotting | [Debug] Plotting
+Main.ShockCooling.Plotting | [Debug] Plotting data type set to flux
+Main.ShockCooling.Plotting | [Debug] Generating all plot vectors
+Supernovae.Plotting | [Debug] Plotting data type set to flux
+Supernovae.Plotting | [Debug] Plotting data unit set to μJy
+Supernovae.Plotting | [Debug] Generating all plot vectors
+Supernovae.Plotting | [Debug] Plotting
+Main.ShockCooling.Plotting | [Debug] Plotting data type set to flux
+Main.ShockCooling.Plotting | [Debug] Generating all plot vectors
+Supernovae.Plotting | [Debug] Plotting data type set to flux
+Supernovae.Plotting | [Debug] Plotting data unit set to μJy
+Supernovae.Plotting | [Debug] Generating all plot vectors
+Supernovae.Plotting | [Debug] Plotting

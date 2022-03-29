@@ -224,7 +224,7 @@ function run_shockcooling(toml::Dict, verbose::Bool)
     for model in models
         @info "Fitting $(model.name)"
         prior, chain, accept_ratio, logdensity, blob = run_mcmc(toml["fitting"], model, supernova)
-        save_chain(joinpath(config["output_path"], "chain_P15"), chain)
+        save_chain(joinpath(config["output_path"], "chain_$(model.name)"), chain)
         push!(priors, prior)
         push!(chains, chain)
         push!(accept_ratios, accept_ratio)
@@ -257,7 +257,7 @@ function run_shockcooling(toml::Dict, verbose::Bool)
         @info "Plotting comparison"
         for (i, model) in enumerate(models)
             comparison_plot_config["path"] = joinpath(config["output_path"], "Comparison $(model.name).svg")
-            plot_comparison(model, supernova, params[i], comparison_plot_config) 
+            plot_comparison(model, supernova, params[i], chains[i], comparison_plot_config) 
         end
     end
 end

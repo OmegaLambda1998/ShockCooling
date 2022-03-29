@@ -9,6 +9,7 @@ using Random
 Random.seed!(0)
 using KernelDensity
 using LaTeXStrings
+using Colors
 
 
 # Internal Packages
@@ -159,6 +160,7 @@ function plot_contour!(fig, gax, model::Model, chain, plot_config::Dict)
     # Tranpose chain so each element is a parameter rather than a walker
     chain = collect(eachrow(reduce(hcat, chain)))
     n = length(ks)
+    @debug "Creating a $(n)x$(n) sized contour plot"
     for i in 1:n
         for j in 1:i
             ax = Axis(gax[i, j], xlabel = model.parameter_names[ks[j]], ylabel = model.parameter_names[ks[i]])
@@ -198,7 +200,7 @@ function plot_contour(model::Model, chain, plot_config::Dict)
     return fig, gax
 end
 
-function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::Dict, plot_config::Dict)
+function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::Dict, chain, plot_config::Dict)
     data_type = get(plot_config, "data_type", "flux")
     @debug "Plotting data type set to $data_type"
     units = get(plot_config, "unit", Dict())
@@ -213,21 +215,36 @@ function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::D
         res_ax.yreversed = true
     end
     colours, markers = plot_lightcurve!(fig, lc_ax, supernova, plot_config)
+    num_chains = min(1000, length(chain))
+    chains = []
+    for c in shuffle(chain)[1:num_chains]
+        d = Dict()
+        for (i, k) in enumerate(sort!(collect(keys(model.parameter_names))))
+            d[k] = c[i] * model.constraints[k][2]
+        end 
+        push!(chains, d)
+    end
     for filt in filters
         sn = filter(obs -> obs.filter.name == filt, supernova)
         time = get(sn, "time")
         m_absmag = run_model(model, param, sn)
+        c_absmag = [run_model(model, c, sn) for c in chains]
         m_mag = absmag_to_mag.(m_absmag, sn.redshift)
+        c_mag = [absmag_to_mag.(c, sn.redshift) for c in c_absmag]
         m_flux = mag_to_flux.(m_mag, sn.zeropoint)
+        c_flux = [mag_to_flux.(c, sn.zeropoint) for c in c_mag]
         if data_type == "flux"
             data_unit = uparse(get(units, "data", "µJy"), unit_context = [Unitful, UnitfulAstro])
             m_data = m_flux
+            c_data = c_flux
         elseif data_type == "magnitude"
             data_unit = uparse(get(units, "data", "AB_mag"), unit_context = [Unitful, UnitfulAstro])
             m_data = m_mag
+            c_data = c_mag
         elseif data_type == "abs_magnitude"
             data_unit = uparse(get(units, "data", "AB_mag"), unit_context = [Unitful, UnitfulAstro])
             m_data = m_absmag
+            c_data = c_absmag
             lc_ax.yreversed = true
             res_ax.yreversed = true
         else
@@ -238,17 +255,20 @@ function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::D
         data = get(sn, data_type)
         data_err = get(sn, "$(data_type)_err")
         lines!(lc_ax, ustrip(time), ustrip(m_data .|> data_unit), color = colours[filt])
+        for c in c_data
+            lines!(lc_ax, ustrip(time), ustrip(c .|> data_unit), color = alphacolor(parse(Colorant, colours[filt]), 0.01))
+        end
         lines!(res_ax, ustrip(time), [0 for t in time], color = "black")
         scatter!(res_ax, ustrip(time), ustrip((m_data .|> data_unit)) .- ustrip((data .|> data_unit)), color = colours[filt])
         errorbars!(res_ax, ustrip(time), ustrip((m_data .|> data_unit)) .- ustrip((data .|> data_unit)), ustrip(data_err .|> data_unit), color = colours[filt])
     end
 end
 
-function plot_comparison(model::Model, supernova::Supernova, param::Dict, plot_config::Dict)
+function plot_comparison(model::Model, supernova::Supernova, param::Dict, chain, plot_config::Dict)
     fig = Figure()
     path = get(plot_config, "path", nothing)
     gax = fig[1, 1] = GridLayout()
-    plot_comparison!(fig, gax, model, supernova, param, plot_config)
+    plot_comparison!(fig, gax, model, supernova, param, chain, plot_config)
     if !isnothing(path)
         save(path, fig)
     end

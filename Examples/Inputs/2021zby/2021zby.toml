@@ -101,9 +101,9 @@ constraints.t.max = -23.5
 
 
 [ fitting ]
-numwalkers = 1000
-burnin = 500000
-iterations = 1000000
+numwalkers = 10
+burnin = 500
+iterations = 1000
 
 [ plot.comparison ] # compare the best fit to the data
 
