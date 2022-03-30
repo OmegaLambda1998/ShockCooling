@@ -24,48 +24,19 @@ Main.ShockCooling | [Debug] Max time set to -17 d
 Main.ShockCooling | [Debug] Ending with 43 observations
 Main.ShockCooling | [Info] Loading in 4 models
 Main.ShockCooling | [Debug] Loaded in 4 models
-Main.ShockCooling | [Info] Loading chain from /home/patricka/.julia/dev/ShockCooling/Examples/Outputs/2021zby/chain_Piro (2015)
-Main.ShockCooling | [Info] Loading chain from /home/patricka/.julia/dev/ShockCooling/Examples/Outputs/2021zby/chain_Piro (2020)
-Main.ShockCooling | [Info] Loading chain from /home/patricka/.julia/dev/ShockCooling/Examples/Outputs/2021zby/chain_Sapir & Waxman (2017) BSG
-Main.ShockCooling | [Info] Loading chain from /home/patricka/.julia/dev/ShockCooling/Examples/Outputs/2021zby/chain_Sapir & Waxman (2017) RSG
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 0.40064997872455876+0.5254735687426568/-0.14795609007457022 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 17.077632067305437+8.939564468901771/-7.290973585373125 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.104355342883757+0.09253276697809909/-0.09557487042048862 d
-Main.ShockCooling | [Info] Best fitting $v_{e}~[\frac{km}{s}]$ = 30259.353810394066+4378.617790223747/-3624.9420701377094 km s^-1
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 106.81767804111296+46.728932715583525/-43.979778979835345 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 20.085753429150536+7.166865107403389/-5.716761257082155 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.000655172855147+0.09127306851774364/-0.09286847244175078 d
-Main.ShockCooling | [Info] Best fitting $v_{t}~[\frac{km}{s}]$ = 18891.33144819827+3300.508884309249/-2571.872764841288 km s^-1
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 20.44752109524117+9.168119894433882/-8.130649847032302 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 50.35856030912424+9.356285109176781/-9.283995267041114 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -23.97199049456485+0.09219190819045764/-0.09202184702321148 d
-Main.ShockCooling | [Info] Best fitting $v_{s}~[\frac{km}{s}]$ = 11850.488279792131+2458.255913080291/-1639.9270935973564 km s^-1
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 19.697188109292192+10.035405599120903/-9.814207718135101 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 17.260162568007278+7.883846709208175/-5.885473542411928 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.00389747984657+0.09281745111039186/-0.09371557925588903 d
-Main.ShockCooling | [Info] Best fitting $v_{s}~[\frac{km}{s}]$ = 14188.387471697337+3225.428206021592/-2275.858223526204 km s^-1
-Main.ShockCooling | [Info] Plotting comparison
-Main.ShockCooling.Plotting | [Debug] Plotting data type set to flux
-Main.ShockCooling.Plotting | [Debug] Generating all plot vectors
-Supernovae.Plotting | [Debug] Plotting data type set to flux
-Supernovae.Plotting | [Debug] Plotting data unit set to μJy
-Supernovae.Plotting | [Debug] Generating all plot vectors
-Supernovae.Plotting | [Debug] Plotting
-Main.ShockCooling.Plotting | [Debug] Plotting data type set to flux
-Main.ShockCooling.Plotting | [Debug] Generating all plot vectors
-Supernovae.Plotting | [Debug] Plotting data type set to flux
-Supernovae.Plotting | [Debug] Plotting data unit set to μJy
-Supernovae.Plotting | [Debug] Generating all plot vectors
-Supernovae.Plotting | [Debug] Plotting
-Main.ShockCooling.Plotting | [Debug] Plotting data type set to flux
-Main.ShockCooling.Plotting | [Debug] Generating all plot vectors
-Supernovae.Plotting | [Debug] Plotting data type set to flux
-Supernovae.Plotting | [Debug] Plotting data unit set to μJy
-Supernovae.Plotting | [Debug] Generating all plot vectors
-Supernovae.Plotting | [Debug] Plotting
-Main.ShockCooling.Plotting | [Debug] Plotting data type set to flux
-Main.ShockCooling.Plotting | [Debug] Generating all plot vectors
-Supernovae.Plotting | [Debug] Plotting data type set to flux
-Supernovae.Plotting | [Debug] Plotting data unit set to μJy
-Supernovae.Plotting | [Debug] Generating all plot vectors
-Supernovae.Plotting | [Debug] Plotting
+Main.ShockCooling | [Info] Fitting Piro (2015)
+Main.ShockCooling.Fitting | [Debug] Running with 8 threads
+Main.ShockCooling.Fitting | [Debug] Numwalkers: 10
+Main.ShockCooling.Fitting | [Debug] Burnin: 500
+Main.ShockCooling.Fitting | [Debug] Iterations: 1000
+Main.ShockCooling.Fitting | [Info] Generating priors
+Main.ShockCooling.Fitting | [Info] Running MCMC
+Main.ShockCooling.Fitting | [Info] MCMC Finished
+Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.404
+Main.ShockCooling | [Info] Fitting Piro (2020)
+Main.ShockCooling.Fitting | [Debug] Running with 8 threads
+Main.ShockCooling.Fitting | [Debug] Numwalkers: 10
+Main.ShockCooling.Fitting | [Debug] Burnin: 500
+Main.ShockCooling.Fitting | [Debug] Iterations: 1000
+Main.ShockCooling.Fitting | [Info] Generating priors
+Main.ShockCooling.Fitting | [Info] Running MCMC

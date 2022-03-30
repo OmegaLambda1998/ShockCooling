@@ -237,7 +237,7 @@ function run_shockcooling(toml::Dict, verbose::Bool)
                 chains[model_name] = chain
             end
         else
-            for model in models
+            for (class, model) in models
                 @info "Fitting $(model.name)"
                 prior, chain, accept_ratio, logdensity, blob = run_mcmc(toml["fitting"], model, supernova)
                 save_chain(joinpath(config["output_path"], "chain_$(model.name)"), chain)
