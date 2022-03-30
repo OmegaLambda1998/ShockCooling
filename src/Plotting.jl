@@ -225,6 +225,13 @@ function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::D
         push!(chains, d)
     end
     for filt in filters
+        time = get(supernova, "time")
+        min_time = minimum(time)
+        max_time = maximum(time)
+        sn = [supernova.lightcurve.observations[1] for i in min_time:1000:max_time]
+        for (i, t) in enumerate(min_time:1000:max_time)
+            sn[i].time = t
+        end
         sn = filter(obs -> obs.filter.name == filt, supernova)
         time = get(sn, "time")
         m_absmag = run_model(model, param, sn)
