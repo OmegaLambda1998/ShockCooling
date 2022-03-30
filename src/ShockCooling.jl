@@ -242,7 +242,7 @@ function run_shockcooling(toml::Dict, verbose::Bool)
                 prior, chain, accept_ratio, logdensity, blob = run_mcmc(toml["fitting"], model, supernova)
                 save_chain(joinpath(config["output_path"], "chain_$(model.name)"), chain)
                 push!(priors, prior)
-                chains[model.name] = chain
+                chains[model.class] = chain
                 push!(accept_ratios, accept_ratio)
                 push!(logdensities, logdensity)
                 push!(blobs, blob)

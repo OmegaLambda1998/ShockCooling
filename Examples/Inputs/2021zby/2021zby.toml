@@ -101,10 +101,10 @@ constraints.t.max = -23.5
 
 
 [ fitting ]
-chain.P15 = "../../Outputs/2021zby/chain_Piro (2015)"
-chain.P20 = "../../Outputs/2021zby/chain_Piro (2020)"
-chain.SW17_BSG = "../../Outputs/2021zby/chain_Sapir & Waxman (2017) BSG"
-chain.SW17_RSG = "../../Outputs/2021zby/chain_Sapir & Waxman (2017) RSG"
+#chain.P15 = "../../Outputs/2021zby/chain_Piro (2015)"
+#chain.P20 = "../../Outputs/2021zby/chain_Piro (2020)"
+#chain.SW17_BSG = "../../Outputs/2021zby/chain_Sapir & Waxman (2017) BSG"
+#chain.SW17_RSG = "../../Outputs/2021zby/chain_Sapir & Waxman (2017) RSG"
 numwalkers = 10
 burnin = 500
 iterations = 1000
