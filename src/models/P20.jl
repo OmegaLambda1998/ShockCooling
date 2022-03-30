@@ -4,20 +4,22 @@
 export P20
 mutable struct P20 <: Model
     name::AbstractString
+    class::AbstractString
     parameter_names::Dict{String, LaTeXString}
     constraints::Dict
 end
 
 # Default parameter names
-function P20(name::AbstractString, constraints::Dict)
+function P20(name::AbstractString, class::AbstractString, constraints::Dict)
     parameter_names = Dict("R" => L"R_{e}~[R_{\odot}]", "M" => L"M_{e}~[M_{\odot}]", "v" => L"v_{t}~[\frac{km}{s}]", "t" => L"t_{off}~[Days]")
-    return P20(name, parameter_names, constraints)
+    return P20(name, class, parameter_names, constraints)
 end
 
 # Default name and parameter names
 function P20(constraints::Dict)
     name = "Piro (2020)"
-    return P20(name, constraints)
+    class = "P20"
+    return P20(name, class, constraints)
 end
 
 function bolometric_luminosity(model::P20, param::Dict, observation::Observation)

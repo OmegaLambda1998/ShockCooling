@@ -3,20 +3,22 @@
 export SW17_RSG
 mutable struct SW17_RSG <: Model
     name::AbstractString
+    class::AbstractString
     parameter_names::Dict{String, LaTeXString}
     constraints::Dict
 end
 
 # Default parameter names
-function SW17_RSG(name::AbstractString, constraints::Dict)
+function SW17_RSG(name::AbstractString, class::AbstractString, constraints::Dict)
     parameter_names = Dict("R" => L"R_{e}~[R_{\odot}]", "M" => L"M_{e}~[M_{\odot}]", "v" => L"v_{s}~[\frac{km}{s}]", "t" => L"t_{off}~[Days]")
-    return SW17_RSG(name, parameter_names, constraints)
+    return SW17_RSG(name, class, parameter_names, constraints)
 end
 
 # Default name and parameter names
 function SW17_RSG(constraints::Dict)
     name = "Sapir & Waxman (2017) RSG"
-    return SW17_RSG(name, constraints)
+    class = "SW17_RSG"
+    return SW17_RSG(name, class, constraints)
 end
 
 function bolometric_luminosity(model::SW17_RSG, param::Dict, observation::Observation)

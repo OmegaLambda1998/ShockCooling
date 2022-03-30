@@ -11,7 +11,7 @@ using ..Models
 
 # Exports
 export run_mcmc
-export save_chain
+export save_chain, load_chain
 
 function get_prior(model::Model, numwalkers)
     ks = sort!(collect(keys(model.constraints)))
@@ -48,6 +48,14 @@ function save_chain(path::AbstractString, chain)
     open(path, "w") do io
         write(io, chain)
     end
+end
+
+function load_chain(path::AbstractString)
+    chain = open(path, "r") do io
+        r = readlines(io)
+        chain = [[parse(Float64, s) for s in split(line, ",")] for line in r]
+    end
+    return chain
 end
 
 function run_mcmc(config::Dict, model::Model, supernova::Supernova)

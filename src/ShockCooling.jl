@@ -193,71 +193,96 @@ function run_shockcooling(toml::Dict, verbose::Bool)
     # Data can either be stored in the "data_path" toml file
     # Or can be specified via [ data.global ] [ data.observations ] etc...
     # TODO test
-    @info "Loading in data"
-    data_path = get(toml["data"], "data_path", nothing)
-    if isnothing(data_path)
-        @debug "Using data in original toml"
-        # Assuming all relevant info is in the [ data ] block
-        supernova = process_supernova(toml["data"], verbose)
+    if "data" in keys(toml)
+        @info "Loading in data"
+        data_path = get(toml["data"], "data_path", nothing)
+        if isnothing(data_path)
+            @debug "Using data in original toml"
+            # Assuming all relevant info is in the [ data ] block
+            supernova = process_supernova(toml["data"], verbose)
+        else
+            if !isabspath(data_path)
+                data_path = joinpath(config["base_path"], data_path)
+            end
+            @debug "Using data in $data_path"
+            supernova = process_supernova(data_path, verbose)
+        end
+        # Cut down data
+        update_supernova!(supernova, toml["data"])
     else
-        if !isabspath(data_path)
-            data_path = joinpath(config["base_path"], data_path)
-        end
-        @debug "Using data in $data_path"
-        supernova = process_supernova(data_path, verbose)
+        supernova = nothing
     end
-    # Cut down data
-    update_supernova!(supernova, toml["data"])
     # Get model
-    # You must specify the model name as it appears in src/models (i.e P15)
-    @info "Loading in $(length(toml["model"])) models"
-    models = [setup_model(model_dict) for model_dict in toml["model"]]
-    @debug "Loaded in $(length(models)) models"
-    # Fit models to data
-    priors = []
-    chains = []
-    accept_ratios = []
-    logdensities = []
-    blobs = []
-    bestfits = []
-    params = []
-    for model in models
-        @info "Fitting $(model.name)"
-        prior, chain, accept_ratio, logdensity, blob = run_mcmc(toml["fitting"], model, supernova)
-        save_chain(joinpath(config["output_path"], "chain_$(model.name)"), chain)
-        push!(priors, prior)
-        push!(chains, chain)
-        push!(accept_ratios, accept_ratio)
-        push!(logdensities, logdensity)
-        push!(blobs, blob)
-        bestfit = get_bestfit(chain)
-        push!(bestfits, bestfit)
-        param = Dict()
-        for (i, k) in enumerate(sort!(collect(keys(model.parameter_names))))
-            @info "Best fitting $(model.parameter_names[k]) = $(bestfit[i][2])+$(bestfit[i][3])/-$(bestfit[i][1]) $(model.constraints[k][2])"
-            param[k] = bestfit[i][2] * model.constraints[k][2]
+    if "model" in keys(toml)
+        # You must specify the model name as it appears in src/models (i.e P15)
+        @info "Loading in $(length(toml["model"])) models"
+        models = [setup_model(model_dict) for model_dict in toml["model"]]
+        models = Dict(model.class => model for model in models)
+        @debug "Loaded in $(length(keys(models))) models"
+    else
+        models = nothing
+    end
+    if "fitting" in keys(toml)
+        # Fit models to data
+        priors = []
+        chains = Dict()
+        accept_ratios = []
+        logdensities = []
+        blobs = []
+        if "chain" in keys(toml["fitting"])
+            for model_name in keys(toml["fitting"]["chain"])
+                chain_path = abspath(joinpath(config["base_path"], toml["fitting"]["chain"][model_name]))
+                @info "Loading chain from $chain_path"
+                chain = load_chain(chain_path)
+                chains[model_name] = chain
+            end
+        else
+            for model in models
+                @info "Fitting $(model.name)"
+                prior, chain, accept_ratio, logdensity, blob = run_mcmc(toml["fitting"], model, supernova)
+                save_chain(joinpath(config["output_path"], "chain_$(model.name)"), chain)
+                push!(priors, prior)
+                chains[model.name] = chain
+                push!(accept_ratios, accept_ratio)
+                push!(logdensities, logdensity)
+                push!(blobs, blob)
+            end
         end
-        push!(params, param)
+        bestfits = Dict()
+        params = Dict()
+        for (model_name, chain) in chains
+            model = models[model_name]
+            bestfit = get_bestfit(chain)
+            bestfits[model_name] = bestfit
+            param = Dict()
+            for (i, k) in enumerate(sort!(collect(keys(model.parameter_names))))
+                @info "Best fitting $(model.parameter_names[k]) = $(bestfit[i][2])+$(bestfit[i][3])/-$(bestfit[i][1]) $(model.constraints[k][2])"
+                param[k] = bestfit[i][2] * model.constraints[k][2]
+            end
+            params[model_name] = param
+        end
     end
 
-    # Plotting
-    plot_config = get(toml, "plot", Dict())
+    if "plot" in keys(toml)
+        # Plotting
+        plot_config = get(toml, "plot", Dict())
 
-    contour_plot_config = get(plot_config, "contour", nothing)
-    if !isnothing(contour_plot_config)
-        @info "Plotting contour"
-        for (i, model) in enumerate(models)
-            contour_plot_config["path"] = joinpath(config["output_path"], "Contour $(model.name).svg")
-            plot_contour(model, chains[i], contour_plot_config) 
+        contour_plot_config = get(plot_config, "contour", nothing)
+        if !isnothing(contour_plot_config)
+            @info "Plotting contour"
+            for (class, model) in models
+                contour_plot_config["path"] = joinpath(config["output_path"], "Contour $(model.name).svg")
+                plot_contour(model, chains[class], contour_plot_config) 
+            end
         end
-    end
 
-    comparison_plot_config = get(plot_config, "comparison", nothing)
-    if !isnothing(comparison_plot_config)
-        @info "Plotting comparison"
-        for (i, model) in enumerate(models)
-            comparison_plot_config["path"] = joinpath(config["output_path"], "Comparison $(model.name).svg")
-            plot_comparison(model, supernova, params[i], chains[i], comparison_plot_config) 
+        comparison_plot_config = get(plot_config, "comparison", nothing)
+        if !isnothing(comparison_plot_config)
+            @info "Plotting comparison"
+            for (class, model) in models
+                comparison_plot_config["path"] = joinpath(config["output_path"], "Comparison $(model.name).svg")
+                plot_comparison(model, supernova, params[class], chains[class], comparison_plot_config) 
+            end
         end
     end
 end

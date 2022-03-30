@@ -215,7 +215,7 @@ function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::D
         res_ax.yreversed = true
     end
     colours, markers = plot_lightcurve!(fig, lc_ax, supernova, plot_config)
-    num_chains = min(1000, length(chain))
+    num_chains = min(100, length(chain))
     chains = []
     for c in shuffle(chain)[1:num_chains]
         d = Dict()
@@ -228,29 +228,46 @@ function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::D
         time = get(supernova, "time")
         min_time = minimum(time)
         max_time = maximum(time)
-        sn = [supernova.lightcurve.observations[1] for i in min_time:1000:max_time]
-        for (i, t) in enumerate(min_time:1000:max_time)
-            sn[i].time = t
-        end
+        step = abs(max_time - min_time) / 100
         sn = filter(obs -> obs.filter.name == filt, supernova)
+        base_obs = sn.lightcurve.observations[1]
+        lc = []
+        for t in collect(min_time:step:max_time)
+            obs = Observation(base_obs.name, t, base_obs.flux, base_obs.flux_err, base_obs.magnitude, base_obs.magnitude_err, base_obs.abs_magnitude, base_obs.abs_magnitude_err, base_obs.is_upperlimit, base_obs.filter)
+            push!(lc, obs) 
+        end 
+        sn_compare = Supernova(supernova.name, supernova.zeropoint, supernova.redshift, Lightcurve(lc))
+        time_compare = get(sn_compare, "time")
         time = get(sn, "time")
+        m_absmag_compare = run_model(model, param, sn_compare)
         m_absmag = run_model(model, param, sn)
+        c_absmag_compare = [run_model(model, c, sn_compare) for c in chains]
         c_absmag = [run_model(model, c, sn) for c in chains]
+        m_mag_compare = absmag_to_mag.(m_absmag_compare, sn_compare.redshift)
         m_mag = absmag_to_mag.(m_absmag, sn.redshift)
+        c_mag_compare = [absmag_to_mag.(c, sn_compare.redshift) for c in c_absmag_compare]
         c_mag = [absmag_to_mag.(c, sn.redshift) for c in c_absmag]
+        m_flux_compare = mag_to_flux.(m_mag_compare, sn_compare.zeropoint)
         m_flux = mag_to_flux.(m_mag, sn.zeropoint)
+        c_flux_compare = [mag_to_flux.(c, sn_compare.zeropoint) for c in c_mag_compare]
         c_flux = [mag_to_flux.(c, sn.zeropoint) for c in c_mag]
         if data_type == "flux"
             data_unit = uparse(get(units, "data", "µJy"), unit_context = [Unitful, UnitfulAstro])
+            m_data_compare = m_flux_compare
             m_data = m_flux
+            c_data_compare = c_flux_compare
             c_data = c_flux
         elseif data_type == "magnitude"
             data_unit = uparse(get(units, "data", "AB_mag"), unit_context = [Unitful, UnitfulAstro])
+            m_data_compare = m_mag_compare
             m_data = m_mag
+            c_data_compare = c_mag_compare
             c_data = c_mag
         elseif data_type == "abs_magnitude"
             data_unit = uparse(get(units, "data", "AB_mag"), unit_context = [Unitful, UnitfulAstro])
+            m_data_compare = m_absmag_compare
             m_data = m_absmag
+            c_data_compare = c_absmag_compare
             c_data = c_absmag
             lc_ax.yreversed = true
             res_ax.yreversed = true
@@ -259,12 +276,12 @@ function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::D
         end
         lc_ax.ylabel = "$data_type [$data_unit]"
         res_ax.ylabel = "model - data [$data_unit]"
+        lines!(lc_ax, ustrip(time_compare), ustrip(m_data_compare .|> data_unit), color = colours[filt])
+        for c in c_data_compare
+            lines!(lc_ax, ustrip(time_compare), ustrip(c .|> data_unit), color = alphacolor(parse(Colorant, colours[filt]), 0.01))
+        end
         data = get(sn, data_type)
         data_err = get(sn, "$(data_type)_err")
-        lines!(lc_ax, ustrip(time), ustrip(m_data .|> data_unit), color = colours[filt])
-        for c in c_data
-            lines!(lc_ax, ustrip(time), ustrip(c .|> data_unit), color = alphacolor(parse(Colorant, colours[filt]), 0.01))
-        end
         lines!(res_ax, ustrip(time), [0 for t in time], color = "black")
         scatter!(res_ax, ustrip(time), ustrip((m_data .|> data_unit)) .- ustrip((data .|> data_unit)), color = colours[filt])
         errorbars!(res_ax, ustrip(time), ustrip((m_data .|> data_unit)) .- ustrip((data .|> data_unit)), ustrip(data_err .|> data_unit), color = colours[filt])

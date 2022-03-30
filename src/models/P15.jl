@@ -4,20 +4,22 @@
 export P15
 mutable struct P15 <: Model
     name::AbstractString
+    class::AbstractString
     parameter_names::Dict{String, LaTeXString}
     constraints::Dict
 end
 
 # Default parameter names
-function P15(name::AbstractString, constraints::Dict)
+function P15(name::AbstractString, class::AbstractString, constraints::Dict)
     parameter_names = Dict("R" => L"R_{e}~[R_{\odot}]", "M" => L"M_{e}~[M_{\odot}]", "v" => L"v_{e}~[\frac{km}{s}]", "t" => L"t_{off}~[Days]")
-    return P15(name, parameter_names, constraints)
+    return P15(name, class, parameter_names, constraints)
 end
 
 # Default name and parameter names
 function P15(constraints::Dict)
     name = "Piro (2015)"
-    return P15(name, constraints)
+    class = "P15"
+    return P15(name, class, constraints)
 end
 
 function bolometric_luminosity(model::P15, param::Dict, observation::Observation)
