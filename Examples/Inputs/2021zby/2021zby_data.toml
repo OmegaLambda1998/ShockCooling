@@ -64,6 +64,7 @@ comment = "#" # Optional, defines what is a comment (will be removed). Defaults 
 facility = "tess"
 instrument = "tess"
 filter = "Red"
+filter_name = "Tess"
 flux_offset = 296 # Defaults to 0. Assumes same unit as data, however you can provide unit through flux_offset_unit
 flux_offset_unit = "µJy"
 
