@@ -6,6 +6,7 @@ using Unitful, UnitfulAstro
 using LoggingExtras
 using TOML
 using Statistics
+using OLUtils
 
 # Internal Packages
 include("Models.jl")
@@ -26,89 +27,6 @@ export plot_prior, plot_prior!
 export plot_walkers, plot_walkers!
 export plot_contour, plot_contour!
 export plot_comparison, plot_comparison!
-
-function setup_global_config!(toml::Dict)
-    config = get(toml, "global", Dict())
-    # Base path is where everything relative will be relative to
-    # Defaults to the directory containing the toml path
-    # Can be relative (to the toml path) or absolute
-    base_path = get(config, "base_path", nothing)
-    if isnothing(base_path)
-        base_path = dirname(toml["toml_path"])
-    elseif !isabspath(base_path)
-        base_path = joinpath(dirname(toml["toml_path"]), base_path)
-    end
-    base_path = abspath(base_path)
-    config["base_path"] = base_path
-    # Output path is where all output (figures) will be placed
-    # Defaults to base_path / Output
-    # Can be relative (to base_path) or absolute
-    output_path = get(config, "output_path", nothing)
-    if isnothing(output_path)
-        output_path = joinpath(base_path, "Output")
-    elseif !isabspath(output_path)
-        output_path = joinpath(base_path, output_path)
-    end
-    config["output_path"] = abspath(output_path)
-    # Data path is where all supernovae data (both photometric and spectroscopic) will be stored
-    # Default to base_path / Data
-    # Can be relatvie (to base_path) or absolute
-    data_path = get(config, "data_path", nothing)
-    if isnothing(data_path)
-        data_path = joinpath(base_path, "Data")
-    elseif !isabspath(data_path)
-        data_path = joinpath(base_path, data_path)
-    end
-    config["data_path"] = abspath(data_path)
-    # Logging sets whether or not to setup and use Supernovae's logging
-    logging = get(config, "logging", false)
-    config["logging"] = logging
-    # Log file is the name of the log file. This will only work if logging is true
-    # Can only be relative to output_path
-    # Defaults to log.txt
-    log_file = get(config, "log_file", nothing)
-    if logging
-        if isnothing(log_file)
-            log_file = "log.txt"
-        end
-        log_file = abspath(joinpath(output_path, log_file))
-    end
-    if !logging & !isnothing(log_file)
-        @warn "Logging set to false, so log file $log_file will not be written. Please add `logger=true` to your [ global ] config"
-    end
-    config["log_file"] = log_file
-    toml["global"] = config
-end
-
-function setup_logger(log_file::AbstractString, verbose::Bool)
-    if verbose
-        level = Logging.Debug
-    else
-        level = Logging.Info
-    end
-    function fmt(io, args)
-        if args.level == Logging.Error
-            color = :red
-            bold = true
-        elseif args.level == Logging.Warn
-            color = :yellow
-            bold = true
-        elseif args.level == Logging.Info
-            color = :cyan
-            bold = false
-        else
-            color = :white
-            bold = false
-        end
-        printstyled(io, args._module, " | ", "[", args.level, "] ", args.message, "\n"; color = color, bold = bold)
-    end
-    logger = TeeLogger(
-        MinLevelLogger(FormatLogger(fmt, open(log_file, "w")), level),
-        MinLevelLogger(FormatLogger(fmt, stdout), level)
-    )
-    global_logger(logger)
-    @info "Logging to $log_file"
-end
 
 function setup_model(model_dict::Dict)
     # TODO Add the ability to change parameter names
@@ -175,20 +93,8 @@ function get_bestfit(chain)
 end
 
 function run_shockcooling(toml::Dict, verbose::Bool)
-    setup_global_config!(toml)
+    setup_global!(toml, verbose, Dict("base_path" => ("toml_path", ""), "output_path" => ("base_path", "Output"), "data_path" => ("base_path", "Data")))
     config = toml["global"]
-    # Ensure all path's exist
-    # TODO test
-    if !isdir(config["base_path"])
-        mkpath(config["base_path"])
-    end
-    if !isdir(config["output_path"])
-        mkpath(config["output_path"])
-    end
-    # Optionally set up logging
-    if config["logging"]
-        setup_logger(config["log_file"], verbose)
-    end
     # Get data
     # Data can either be stored in the "data_path" toml file
     # Or can be specified via [ data.global ] [ data.observations ] etc...
@@ -289,7 +195,10 @@ end
 
 function run_shockcooling(toml_path::AbstractString, verbose::Bool)
     toml = TOML.parsefile(toml_path)
-    toml["toml_path"] = abspath(toml_path)
+    if !("global" in keys(toml))
+        toml["global"] = Dict()
+    end
+    toml["global"]["toml_path"] = dirname(abspath(toml_path))
     return run_shockcooling(toml, verbose)
 end
 
