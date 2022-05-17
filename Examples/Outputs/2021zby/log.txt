@@ -1,4 +1,4 @@
-OLUtils | [Info] Logging to /home/patricka/.julia/dev/ShockCooling/Examples/Outputs/2021zby/log.txt
+OLUtils | [Info] Logging to /home/patricka/dev/ShockCooling/Examples/Outputs/2021zby/log.txt
 Main.ShockCooling | [Info] Loading in data
 Supernovae.Data | [Info] Loading in Supernova 2021zby
 Supernovae.Data | [Info] Found 2 photometry sources
@@ -8,41 +8,8 @@ Supernovae.Photometrics | [Info] Loading observations for tess 6hr
 Supernovae.Data | [Info] Loading supernova
 Supernovae.Data | [Info] All done
 Main.ShockCooling | [Info] Loading in 4 models
-Main.ShockCooling | [Info] Fitting Piro (2015)
-Main.ShockCooling.Fitting | [Info] Generating priors
-Main.ShockCooling.Fitting | [Info] Running MCMC
-Main.ShockCooling.Fitting | [Info] MCMC Finished
-Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.404
-Main.ShockCooling | [Info] Fitting Piro (2020)
-Main.ShockCooling.Fitting | [Info] Generating priors
-Main.ShockCooling.Fitting | [Info] Running MCMC
-Main.ShockCooling.Fitting | [Info] MCMC Finished
-Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.418
-Main.ShockCooling | [Info] Fitting Sapir & Waxman (2017) BSG
-Main.ShockCooling.Fitting | [Info] Generating priors
-Main.ShockCooling.Fitting | [Info] Running MCMC
-Main.ShockCooling.Fitting | [Info] MCMC Finished
-Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.554
-Main.ShockCooling | [Info] Fitting Sapir & Waxman (2017) RSG
-Main.ShockCooling.Fitting | [Info] Generating priors
-Main.ShockCooling.Fitting | [Info] Running MCMC
-Main.ShockCooling.Fitting | [Info] MCMC Finished
-Main.ShockCooling.Fitting | [Info] MCMC has accept ratio of 0.41200000000000003
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 0.3556372643253846+1.2480651321589795/-0.13948794473331794 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 31.44076417250449+6.138908922684838/-6.1716788326379195 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.06594366935803+0.09766457528534289/-0.12268090552483102 d
-Main.ShockCooling | [Info] Best fitting $v_{e}~[\frac{km}{s}]$ = 23649.80524709541+2562.7180643506144/-2393.6982304319463 km s^-1
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 108.40758275593626+29.20287195634546/-36.623665678861556 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 18.728689044752823+3.9037416668495197/-8.191525117311603 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -23.985908140151082+0.1271794224029783/-0.10400266119480861 d
-Main.ShockCooling | [Info] Best fitting $v_{t}~[\frac{km}{s}]$ = 19058.946538604258+6592.885433326108/-1752.5520319799798 km s^-1
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 22.064002376824874+9.02898228377748/-5.290812485179778 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 48.677619589022136+7.493933146364718/-7.348024067031041 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -23.961606842507585+0.10292292288278304/-0.0855214216348692 d
-Main.ShockCooling | [Info] Best fitting $v_{s}~[\frac{km}{s}]$ = 11479.382605188368+1658.6770769943141/-1137.110938387912 km s^-1
-Main.ShockCooling | [Info] Best fitting $M_{e}~[M_{\odot}]$ = 12.962951758005945+8.583334300029412/-4.289742457811828 M⊙
-Main.ShockCooling | [Info] Best fitting $R_{e}~[R_{\odot}]$ = 19.400347436235933+12.02574694146331/-4.506806876260773 R⊙
-Main.ShockCooling | [Info] Best fitting $t_{off}~[Days]$ = -24.026939442945924+0.1622579722139328/-0.08780623919468056 d
-Main.ShockCooling | [Info] Best fitting $v_{s}~[\frac{km}{s}]$ = 14138.697730330021+2636.2002981571186/-2414.1932481532804 km s^-1
-Main.ShockCooling | [Info] Plotting contour
-Main.ShockCooling | [Info] Plotting comparison
+Main.ShockCooling | [Info] Loading chain from /home/patricka/dev/ShockCooling/Examples/Outputs/2021zby/chain_Piro (2015)
+Main.ShockCooling | [Info] Loading chain from /home/patricka/dev/ShockCooling/Examples/Outputs/2021zby/chain_Piro (2020)
+Main.ShockCooling | [Info] Loading chain from /home/patricka/dev/ShockCooling/Examples/Outputs/2021zby/chain_Sapir & Waxman (2017) BSG
+Main.ShockCooling | [Info] Loading chain from /home/patricka/dev/ShockCooling/Examples/Outputs/2021zby/chain_Sapir & Waxman (2017) RSG
+Main.ShockCooling | [Info] Analysing P15

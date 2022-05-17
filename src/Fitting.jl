@@ -12,6 +12,7 @@ using ..Models
 # Exports
 export run_mcmc
 export save_chain, load_chain
+export likelihood_function
 
 function get_prior(model::Model, numwalkers)
     ks = sort!(collect(keys(model.constraints)))

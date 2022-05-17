@@ -157,12 +157,15 @@ function run_shockcooling(toml::Dict, verbose::Bool)
         bestfits = Dict()
         params = Dict()
         for (model_name, chain) in chains
+            @info "Analysing $model_name"
             model = models[model_name]
+            llhood = likelihood_function(model, supernova)
             bestfit = get_bestfit(chain)
+            likelihood = llhood(bestfit)
             bestfits[model_name] = bestfit
             param = Dict()
             for (i, k) in enumerate(sort!(collect(keys(model.parameter_names))))
-                @info "Best fitting $(model.parameter_names[k]) = $(bestfit[i][2])+$(bestfit[i][3])/-$(bestfit[i][1]) $(model.constraints[k][2])"
+                @info "Best fitting $(model.parameter_names[k]) = $(round(bestfit[i][2], digits=3))+$(round(bestfit[i][3], digits=3))/-$(round(bestfit[i][1], digits=3)) $(model.constraints[k][2]) with likelihood $(likelihood)"
                 param[k] = bestfit[i][2] * model.constraints[k][2]
             end
             params[model_name] = param
