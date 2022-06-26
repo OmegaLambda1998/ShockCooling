@@ -9,6 +9,7 @@ using Random
 Random.seed!(0)
 using KernelDensity
 using LaTeXStrings
+using Statistics
 using Colors
 
 
@@ -166,6 +167,7 @@ function plot_contour!(fig, gax, model::Model, chain, plot_config::Dict)
             ax = Axis(gax[i, j], xlabel = model.parameter_names[ks[j]], ylabel = model.parameter_names[ks[i]])
             if i == j
                 density!(ax, chain[i], color = "darkblue")
+                vlines!(ax, quantile!(chain[i], [0.16, 0.5, 0.84]), color = "black")
                 hist!(ax, chain[i], color = :transparent, normalization = :pdf, strokewidth = 1, strokecolor = "black")
                 ylims!(ax, low = 0)
                 xlims!(ax, minimum(chain[i]), maximum(chain[i]))

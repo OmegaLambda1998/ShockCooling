@@ -184,7 +184,7 @@ function run_shockcooling(toml::Dict, verbose::Bool)
             @info "Plotting contour"
             for (class, model) in models
                 contour_plot_config["path"] = joinpath(config["output_path"], "Contour $(model.name).svg")
-                plot_contour(model, chains[class], contour_plot_config) 
+                plot_contour(model, chains[class], contour_plot_config)
             end
         end
 

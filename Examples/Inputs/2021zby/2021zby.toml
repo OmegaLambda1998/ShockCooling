@@ -113,12 +113,12 @@ numwalkers = 1e5
 burnin = 1e6 
 iterations = 1e7 
 
-[ plot.comparison ] # compare the best fit to the data
-filters = ["Red", "orange"]
-marker.tess = "utriangle"
-marker.atlas = "circle"
-colour.Red = "red"
-colour.orange = "orange"
-name.Red = "Tess"
+#[ plot.comparison ] # compare the best fit to the data
+#filters = ["Red", "orange"]
+#marker.tess = "utriangle"
+#marker.atlas = "circle"
+#colour.Red = "red"
+#colour.orange = "orange"
+#name.Red = "Tess"
 
 [ plot.contour ]
