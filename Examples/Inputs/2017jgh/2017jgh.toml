@@ -34,15 +34,9 @@ constraints.t.min = -30
 constraints.t.max = -20
 
 [ fitting ]
-numwalkers = 100
-thinning = 1
-burnin = 100
-numsamples_perwalker = 200
-bestfit = "median" # How to choose the best fitting value
-
-[ plot.prior ] # show the distribution of prior values
-
-[ plot.burnin ] # show how the walkers moved over the burn in phase
+numwalkers = 1e2
+burnin = 1e3
+iterations = 1e4
 
 [ plot.comparison ] # compare the best fit to the data
 

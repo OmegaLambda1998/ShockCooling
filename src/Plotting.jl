@@ -11,6 +11,7 @@ using KernelDensity
 using LaTeXStrings
 using Statistics
 using Colors
+using Printf
 
 
 # Internal Packages
@@ -50,7 +51,7 @@ markers_labels = shuffle([
 colour_labels = shuffle(["salmon", "coral", "tomato", "firebrick", "crimson", "red", "orange", "green", "forestgreen", "seagreen", "olive", "lime", "charteuse", "teal", "turquoise", "cyan", "navyblue", "midnightblue", "indigo", "royalblue", "slateblue", "steelblue", "blue", "purple", "orchid", "magenta", "maroon", "hotpink", "deeppink", "saddlebrown", "brown", "peru", "tan"])
 
 function plot_temperature(model::Model, param::Dict, supernova::Supernova, plot_config::Dict)
-    fig = Figure()
+    fig = Figure(resolution=(3200, 2400), fontsize=28)
     units = get(plot_config, "unit", Dict())
     time_unit = get(units, "time", nothing)
     if isnothing(time_unit)
@@ -85,7 +86,7 @@ function plot_temperature!(fig, ax, model::Model, param::Dict, supernova::Supern
 end
 
 function plot_radius(model::Model, param::Dict, supernova::Supernova, plot_config::Dict)
-    fig = Figure()
+    fig = Figure(resolution=(3200, 2400), fontsize=28)
     units = get(plot_config, "unit", Dict())
     time_unit = get(units, "time", nothing)
     if isnothing(time_unit)
@@ -137,7 +138,7 @@ function plot_luminosity!(fig, ax, model::Model, param::Dict, supernova::Superno
 end
 
 function plot_luminosity(model::Model, param::Dict, supernova::Supernova, plot_config::Dict)
-    fig = Figure()
+    fig = Figure(resolution=(3200, 2400), fontsize=28)
     units = get(plot_config, "unit", Dict())
     time_unit = get(units, "time", nothing)
     if isnothing(time_unit)
@@ -158,17 +159,32 @@ end
 
 function plot_contour!(fig, gax, model::Model, chain, plot_config::Dict)
     ks = sort!(collect(keys(model.constraints)))
+    scale = get(plot_config, "scale", Dict())
     # Tranpose chain so each element is a parameter rather than a walker
     chain = collect(eachrow(reduce(hcat, chain)))
     n = length(ks)
     @debug "Creating a $(n)x$(n) sized contour plot"
     for i in 1:n
+        sc_i = get(scale, ks[i], 1)
+        if sc_i > 1
+            tmp_i = @sprintf "%.1E" sc_i
+            i_str = latexstring(" (\\times" * tmp_i * ")")
+        else
+            i_str = ""
+        end
+        model.parameter_names[ks[i]] *= i_str
+        chain[i] ./= sc_i
+    end
+    for i in 1:n
         for j in 1:i
-            ax = Axis(gax[i, j], xlabel = model.parameter_names[ks[j]], ylabel = model.parameter_names[ks[i]])
+            if i == j == 1
+                ax = Axis(gax[i, j], xlabel = model.parameter_names[ks[j]], ylabel = model.parameter_names[ks[i]], title=model.name)
+            else
+                ax = Axis(gax[i, j], xlabel = model.parameter_names[ks[j]], ylabel = model.parameter_names[ks[i]])
+            end
             if i == j
-                density!(ax, chain[i], color = "darkblue")
+                density!(ax, chain[i], color = "purple4")
                 vlines!(ax, quantile!(chain[i], [0.16, 0.5, 0.84]), color = "black")
-                hist!(ax, chain[i], color = :transparent, normalization = :pdf, strokewidth = 1, strokecolor = "black")
                 ylims!(ax, low = 0)
                 xlims!(ax, minimum(chain[i]), maximum(chain[i]))
                 hideydecorations!(ax)
@@ -177,7 +193,7 @@ function plot_contour!(fig, gax, model::Model, chain, plot_config::Dict)
                 end
             else
                 k = kde(hcat(chain[j], chain[i]))
-                contour!(ax, k.x, k.y, k.density)
+                contour!(ax, k.x, k.y, k.density; levels=2, colormap="darkrainbow")
                 if j != 1
                     hideydecorations!(ax, grid=false)
                 end
@@ -192,7 +208,7 @@ function plot_contour!(fig, gax, model::Model, chain, plot_config::Dict)
 end
 
 function plot_contour(model::Model, chain, plot_config::Dict)
-    fig = Figure(resolution=(1600, 1200))
+    fig = Figure(resolution=(3200, 2400), fontsize=28)
     path = get(plot_config, "path", nothing)
     gax = fig[1, 1] = GridLayout()
     plot_contour!(fig, gax, model, chain, plot_config)
@@ -202,7 +218,29 @@ function plot_contour(model::Model, chain, plot_config::Dict)
     return fig, gax
 end
 
-function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::Dict, chain, plot_config::Dict)
+function plot_contour(models, chains, plot_config::Dict)
+    fig = Figure(resolution=(3200, 2400), fontsize=28)
+    path = get(plot_config, "path", nothing)
+    n = ceil(sqrt(length(models)))
+    for (i, (class, model)) in enumerate(models)
+        x = i % n
+        if x == 0
+            x = n
+        end
+        y = ceil(i / n)
+        x = floor(Int, x)
+        y = floor(Int, y)
+        gax = fig[x, y] = GridLayout()
+        plot_contour!(fig, gax, model, chains[class], plot_config)
+    end
+    if !isnothing(path)
+        save(path, fig)
+    end
+    return fig
+end
+
+
+function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::Dict, chain, plot_config::Dict, xaxis=true, yaxis=true)
     data_type = get(plot_config, "data_type", "flux")
     @debug "Plotting data type set to $data_type"
     units = get(plot_config, "unit", Dict())
@@ -210,14 +248,14 @@ function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::D
     names = get(plot_config, "names", nothing)
     @debug "Generating all plot vectors"
     filters = Set([obs.filter.name for obs in supernova.lightcurve.observations])
-    lc_ax = Axis(gax[1, 1], xlabel = "Time [$time_unit]")
-    res_ax = Axis(gax[2, 1], xlabel = "Time [$time_unit]")
+    lc_ax = Axis(gax[1:2, 1], xlabel = "Time [$time_unit]", title=model.name)
+    res_ax = Axis(gax[3, 1], xlabel = "Time [$time_unit]")
     if data_type in ["magnitude", "abs_magnitude"]
         lc_ax.yreversed = true
         res_ax.yreversed = true
     end
     colours, markers = plot_lightcurve!(fig, lc_ax, supernova, plot_config)
-    num_chains = min(100, length(chain))
+    num_chains = min(500, length(chain))
     chains = []
     for c in shuffle(chain)[1:num_chains]
         d = Dict()
@@ -285,20 +323,54 @@ function plot_comparison!(fig, gax, model::Model, supernova::Supernova, param::D
         data = get(sn, data_type)
         data_err = get(sn, "$(data_type)_err")
         lines!(res_ax, ustrip(time), [0 for t in time], color = "black")
-        scatter!(res_ax, ustrip(time), ustrip((m_data .|> data_unit)) .- ustrip((data .|> data_unit)), color = colours[filt])
+        scatter!(res_ax, ustrip(time), ustrip((m_data .|> data_unit)) .- ustrip((data .|> data_unit)), color = colours[filt], marker = markers[base_obs.name])
         errorbars!(res_ax, ustrip(time), ustrip((m_data .|> data_unit)) .- ustrip((data .|> data_unit)), ustrip(data_err .|> data_unit), color = colours[filt])
+        hidexdecorations!(lc_ax, grid=false)
+        if !xaxis
+            hidexdecorations!(res_ax, grid=false)
+        end
+        if !yaxis
+            hideydecorations!(lc_ax, grid=false)
+            hideydecorations!(res_ax, grid=false)
+        end
     end
 end
 
 function plot_comparison(model::Model, supernova::Supernova, param::Dict, chain, plot_config::Dict)
-    fig = Figure()
+    fig = Figure(resolution=(3200, 2400), fontsize=28)
     path = get(plot_config, "path", nothing)
-    gax = fig[1, 1] = GridLayout()
+    gax = fig[1, 1] = GridLayout(title=model.name)
     plot_comparison!(fig, gax, model, supernova, param, chain, plot_config)
     if !isnothing(path)
         save(path, fig)
     end
     return fig, gax
+end
+
+function plot_comparison(models, supernova::Supernova, params, chains, plot_config::Dict)
+    fig = Figure(resolution=(3200, 2400), fontsize=28)
+    path = get(plot_config, "path", nothing)
+    n = ceil(sqrt(length(models)))
+    for (i, (class, model)) in enumerate(models)
+        x = i % n
+        if x == 0
+            x = n
+        end
+        y = ceil(i / n)
+        x = floor(Int, x)
+        y = floor(Int, y)
+        gax = fig[x, y] = GridLayout(title=model.name)
+        xaxis = x == n
+        yaxis = y == 1
+        plot_comparison!(fig, gax, model, supernova, params[class], chains[class], plot_config, xaxis, yaxis)
+    end
+    for i in 1:Int64(n)
+        colsize!(fig.layout, i, Relative(1/n))
+    end
+    if !isnothing(path)
+        save(path, fig)
+    end
+    return fig
 end
 
 end

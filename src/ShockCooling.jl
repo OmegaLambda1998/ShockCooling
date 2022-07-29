@@ -182,18 +182,30 @@ function run_shockcooling(toml::Dict, verbose::Bool)
         contour_plot_config = get(plot_config, "contour", nothing)
         if !isnothing(contour_plot_config)
             @info "Plotting contour"
-            for (class, model) in models
-                contour_plot_config["path"] = joinpath(config["output_path"], "Contour $(model.name).svg")
-                plot_contour(model, chains[class], contour_plot_config)
+            join = get(contour_plot_config, "join", false)
+            if join
+                contour_plot_config["path"] = joinpath(config["output_path"], "Contour $(supernova.name).svg")
+                plot_contour(models, chains, contour_plot_config)
+            else
+                for (class, model) in models
+                    contour_plot_config["path"] = joinpath(config["output_path"], "Contour $(model.name).svg")
+                    plot_contour(model, chains[class], contour_plot_config)
+                end
             end
         end
 
         comparison_plot_config = get(plot_config, "comparison", nothing)
         if !isnothing(comparison_plot_config)
             @info "Plotting comparison"
-            for (class, model) in models
-                comparison_plot_config["path"] = joinpath(config["output_path"], "Comparison $(model.name).svg")
-                plot_comparison(model, supernova, params[class], chains[class], comparison_plot_config) 
+            join = get(comparison_plot_config, "join", false)
+            if join
+                comparison_plot_config["path"] = joinpath(config["output_path"], "Comparison $(supernova.name).svg")
+                plot_comparison(models, supernova, params, chains, comparison_plot_config) 
+            else
+                for (class, model) in models
+                    comparison_plot_config["path"] = joinpath(config["output_path"], "Comparison $(model.name).svg")
+                    plot_comparison(model, supernova, params[class], chains[class], comparison_plot_config) 
+                end
             end
         end
     end

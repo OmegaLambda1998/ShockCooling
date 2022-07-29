@@ -1,7 +1,7 @@
 [ global ]
-base_path = "/home/patricka/.julia/dev/Testing/Supernovae/" # Optional, defaults to the directory containing this input file. Can be relative (to this input file's directory) or absolute. All relative paths will be assumed to be relative to base_path
+base_path = "../" # Optional, defaults to the directory containing this input file. Can be relative (to this input file's directory) or absolute. All relative paths will be assumed to be relative to base_path
 filter_path = "Filters" # Defaults to base_path / Filters
-output_path = "/home/patricka/.julia/dev/Testing/ShockCooling/Outputs/2016gkg" # Defaults to base_path / Output
+output_path = "../Outputs" # Defaults to base_path / Output
 
 # Data
 [ data ]
